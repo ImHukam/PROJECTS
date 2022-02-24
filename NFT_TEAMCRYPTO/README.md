@@ -15,5 +15,7 @@ npx hardhat help
 multiple time npm run command(in bash or git bash): 
 for i in `seq 10`; do node scripts/mint-nft.js; done 
 for i in {1..10}; do command; done
+
+for powershall: for($i=1;$i -le 10;$i++) {command}
 ```
  
