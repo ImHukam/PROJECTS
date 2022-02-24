@@ -12,5 +12,8 @@ npx hardhat test
 npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
+multiple time npm run command: 
+for i in `seq 10`; do node scripts/mint-nft.js; done 
+for i in {1..10}; do command; done
 ```
  
