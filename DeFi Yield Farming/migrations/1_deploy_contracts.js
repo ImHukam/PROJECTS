@@ -22,5 +22,5 @@ module.exports = async function (deployer) {
 
   //transfer 100 mock dai token to investor 
   await daiToken.transfer("0xDdc3C83e29f0E784D772637fB8B7e4Ae59cF921d",'100000000000000000000');
-
+ 
 };
