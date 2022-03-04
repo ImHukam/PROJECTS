@@ -106,4 +106,4 @@ contract('TokenFarm', ([owner, investor]) => {
     })
   })
 
-})
+}) 
