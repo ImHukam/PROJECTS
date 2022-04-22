@@ -1,5 +1,5 @@
 Project Overview:</br>
-deployed a smart contract in evm( bsc chain) for compound interest staking..</br>
+deployed a smart contract using evm( bsc chain) for compound interest staking..</br>
 
 Tools: hardhat, ethers js,openzeppelin, </br>
 Language: solidity and java script</br>
