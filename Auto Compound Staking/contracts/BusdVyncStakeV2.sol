@@ -45,7 +45,7 @@ interface TreasuryInterface {
 
 // change 2: made the contract initializable as contracts upgradable with proxies can have constructor of their own
 
-contract BUSDVYNCSTAKE is Initializable, ReentrancyGuardUpgradeSafe, OwnableUpgradeSafe {
+contract BUSDVYNCSTAKEV2 is Initializable, ReentrancyGuardUpgradeSafe, OwnableUpgradeSafe {
     address public dataAddress;
     GetDataInterface data;
     address public TreasuryAddress;

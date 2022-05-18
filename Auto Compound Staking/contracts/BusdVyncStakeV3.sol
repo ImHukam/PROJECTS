@@ -45,7 +45,7 @@ interface TreasuryInterface {
 
 // change 2: made the contract initializable as contracts upgradable with proxies can have constructor of their own
 
-contract BUSDVYNCSTAKE is Initializable, ReentrancyGuardUpgradeSafe, OwnableUpgradeSafe {
+contract BUSDVYNCSTAKEV3 is Initializable, ReentrancyGuardUpgradeSafe, OwnableUpgradeSafe {
     address public dataAddress;
     GetDataInterface data;
     address public TreasuryAddress;
@@ -87,6 +87,7 @@ contract BUSDVYNCSTAKE is Initializable, ReentrancyGuardUpgradeSafe, OwnableUpgr
     uint256 s; // total staking amount
     uint256 u; //total unstaking amount
     uint256 public totalSupply;
+    uint256 public version;
 
     event rewardClaim(address indexed user, uint256 rewards);
     event Stake(address account, uint256 stakeAmount);

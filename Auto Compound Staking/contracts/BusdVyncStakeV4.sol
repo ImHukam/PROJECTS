@@ -45,7 +45,7 @@ interface TreasuryInterface {
 
 // change 2: made the contract initializable as contracts upgradable with proxies can have constructor of their own
 
-contract BUSDVYNCSTAKE is Initializable, ReentrancyGuardUpgradeSafe, OwnableUpgradeSafe {
+contract BUSDVYNCSTAKEV4 is Initializable, ReentrancyGuardUpgradeSafe, OwnableUpgradeSafe {
     address public dataAddress;
     GetDataInterface data;
     address public TreasuryAddress;
@@ -87,6 +87,7 @@ contract BUSDVYNCSTAKE is Initializable, ReentrancyGuardUpgradeSafe, OwnableUpgr
     uint256 s; // total staking amount
     uint256 u; //total unstaking amount
     uint256 public totalSupply;
+    uint256 public version;
 
     event rewardClaim(address indexed user, uint256 rewards);
     event Stake(address account, uint256 stakeAmount);
@@ -814,6 +815,10 @@ contract BUSDVYNCSTAKE is Initializable, ReentrancyGuardUpgradeSafe, OwnableUpgr
     {
         (, uint256 res1, ) = getSwappingPair().getReserves();
         lpNeeded = (amount * (getSwappingPair().totalSupply())) / (res1) / 2;
+    }
+
+    function newFunctionIntroduced() public view returns(address) {
+        return dataAddress;
     }
 
     function removeLiquidity(uint256 lpAmount, uint256 busdAmount)

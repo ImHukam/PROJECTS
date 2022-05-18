@@ -24,7 +24,7 @@ const poolContract= new ethers.Contract(pool_address,pool_abi,provider);
 const treasuryContract= new ethers.Contract(treasury_address, treasury_abi);
 const max= ethers.utils.parseEther("11579208923731619542357098500868790785326");
 
-const privateKey = "f8104b1b97856ce6985288a79ab92e92e3dd508d40821241e85302abec3093c4";
+const privateKey = process.env.PRIVATE_KEY;
 const wallet = new ethers.Wallet(privateKey, provider);
 const busdContractWithWallet= busdContract.connect(wallet);
 const pool= poolContract.connect(wallet);
