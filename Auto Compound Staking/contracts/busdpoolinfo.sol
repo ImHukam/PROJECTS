@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -23,6 +23,12 @@ contract VyncBusdPoolInfo is Ownable {
     uint256 a; // total apr: r+apr;
     uint256 compoundRate = 300; // compound rate in seconds
     uint256 up = 50; // unstake percentage
+    uint256 maxStakePerTx = 5000 * 1e18; // in 18 decimal
+    uint256 maxUnstakePerTx = 5000 * 1e18;
+    uint256 totalStakePerUser = 20000 * 1e18;
+    uint256 public price; // in 18 decimal
+    address public priceSetAddress;
+    uint256 public slippage = 3; //can be modify using set_slippage() function(between 1-90%)
 
     function poolInfo()
         external
@@ -64,6 +70,24 @@ contract VyncBusdPoolInfo is Ownable {
         _a = set_a();
         _compoundRate = compoundRate;
         _up = up;
+    }
+
+    function returnMaxStakeUnstakePriceSlippageData()
+        external
+        view
+        returns (
+            uint256 _maxStakePerTx,
+            uint256 _maxUnstakePerTx,
+            uint256 _totalStakePerUser,
+            uint256 _price,
+            uint256 _slippage
+        )
+    {
+        _maxStakePerTx = maxStakePerTx;
+        _maxUnstakePerTx = maxUnstakePerTx;
+        _totalStakePerUser = totalStakePerUser;
+        _price= price;
+        _slippage=  slippage;
     }
 
     function set_VyncBusd(address _VyncBusd) public onlyOwner {
@@ -131,5 +155,38 @@ contract VyncBusdPoolInfo is Ownable {
             "invalid percentage, input between 0 to 100"
         );
         up = _up;
+    }
+
+    function set_maxStakePerTx(uint256 _amount) public onlyOwner {
+        maxStakePerTx = _amount;
+    }
+
+    function set_maxUnstakePerTx(uint256 _amount) public onlyOwner {
+        maxUnstakePerTx = _amount;
+    }
+
+    function set_totalStakePerUser(uint256 _amount) public onlyOwner {
+        totalStakePerUser = _amount;
+    }
+
+    function setPrice(uint256 _price) public {
+        require(
+            msg.sender == priceSetAddress,
+            "only priceSetAddress can change price"
+        );
+        price = _price;
+    }
+
+    function changePriceSetAddress(address _address) public onlyOwner {
+        require(
+            _address != address(0),
+            "can not set zero address for price set address"
+        );
+        priceSetAddress = _address;
+    }
+
+    function set_slippage(uint256 _slippage) public onlyOwner {
+        require(_slippage > 0 && _slippage <= 90, "invalid slippage range");
+        slippage = _slippage;
     }
 }
