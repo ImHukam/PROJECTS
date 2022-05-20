@@ -1,226 +1,219 @@
 {
   "manifestVersion": "3.2",
   "admin": {
-    "address": "0xffbEda9484cbC2b0c67D3E373514e5c8630bE5F7",
-    "txHash": "0xc632aa6eee60a30feabf7acdf77c53d77359b262a1771720ec057816df4fcdd0"
+    "address": "0x274D866C93403054Cba860808e76771FDF47E0FB",
+    "txHash": "0x7409ab9b0995d08342958c2768def440ca418f2f0d42edde1a4646086aeae54d"
   },
   "proxies": [
     {
-      "address": "0xcfB06151CB6995382CFDfF3177b008c90b38bcD0",
-      "txHash": "0x8c86790d4ed70efa6c22ecaddfa9522e62a5b50c482758ff2f52e50bc5700fcb",
+      "address": "0x1B84F2497090C8A7Ac11d515646F680e23a4d352",
+      "txHash": "0x5f58c067ab57a3d3894c17b78e9f40cb24a3b311e7052c1c66e98e9696cb4db9",
       "kind": "transparent"
     },
     {
-      "address": "0xB392B57a45e01F60D3aB4E9109D9d23cAaF5805b",
-      "txHash": "0x39491a1874f020fa3e7cac0ccd67d98439aa96122711617e5defc8d6b3bb95ac",
+      "address": "0x3F855C2D6aa35b99Df67025ad0E7007755808a36",
+      "txHash": "0x9655e6b656106dc2ccef30329b12841250e912777a945b644e47e44d7e866de2",
       "kind": "transparent"
     }
   ],
   "impls": {
-    "589a485641082f2101ce6c4720fbdf93922ef8df8c35182a529f26020c843732": {
-      "address": "0xb62A781F44c9a3342E975c4eD25c449A0C3BEfc7",
-      "txHash": "0x5a85c878691c38f60182da035402845032874ff1efc5b792de0f1961369cfed4",
+    "f0234209901560375e8a3036a4ef0efb1f55782768c528e2e8aeab6ba8ab91c3": {
+      "address": "0x6d2c8E1095858C10e98CA40da9a1F625c8d49B83",
+      "txHash": "0x363af5b02b4c0455dedf45c8a960413e22b50503498022b94b768f9c0196f6b3",
       "layout": {
         "storage": [
           {
-            "label": "initialized",
+            "label": "_initialized",
             "offset": 0,
             "slot": "0",
-            "type": "t_bool",
+            "type": "t_uint8",
             "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:21"
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
           },
           {
-            "label": "initializing",
+            "label": "_initializing",
             "offset": 1,
             "slot": "0",
             "type": "t_bool",
             "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:26"
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
           },
           {
-            "label": "______gap",
+            "label": "_status",
             "offset": 0,
             "slot": "1",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:61"
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
           },
           {
-            "label": "_notEntered",
+            "label": "__gap",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:74"
+          },
+          {
+            "label": "__gap",
             "offset": 0,
             "slot": "51",
-            "type": "t_bool",
-            "contract": "ReentrancyGuardUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol:21"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "52",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "ReentrancyGuardUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol:63"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "101",
             "type": "t_array(t_uint256)50_storage",
-            "contract": "ContextUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol:37"
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
           },
           {
             "label": "_owner",
             "offset": 0,
-            "slot": "151",
+            "slot": "101",
             "type": "t_address",
-            "contract": "OwnableUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol:18"
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
           },
           {
             "label": "__gap",
             "offset": 0,
-            "slot": "152",
+            "slot": "102",
             "type": "t_array(t_uint256)49_storage",
-            "contract": "OwnableUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol:78"
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
           },
           {
             "label": "dataAddress",
             "offset": 0,
-            "slot": "201",
+            "slot": "151",
+            "type": "t_address",
+            "contract": "BUSDVYNCSTAKE",
+            "src": "contracts/BusdVyncStake.sol:47"
+          },
+          {
+            "label": "data",
+            "offset": 0,
+            "slot": "152",
+            "type": "t_contract(GetDataInterface)796",
+            "contract": "BUSDVYNCSTAKE",
+            "src": "contracts/BusdVyncStake.sol:48"
+          },
+          {
+            "label": "TreasuryAddress",
+            "offset": 0,
+            "slot": "153",
             "type": "t_address",
             "contract": "BUSDVYNCSTAKE",
             "src": "contracts/BusdVyncStake.sol:49"
           },
           {
-            "label": "data",
+            "label": "treasury",
             "offset": 0,
-            "slot": "202",
-            "type": "t_contract(GetDataInterface)1697",
+            "slot": "154",
+            "type": "t_contract(TreasuryInterface)804",
             "contract": "BUSDVYNCSTAKE",
             "src": "contracts/BusdVyncStake.sol:50"
           },
           {
-            "label": "TreasuryAddress",
-            "offset": 0,
-            "slot": "203",
-            "type": "t_address",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:51"
-          },
-          {
-            "label": "treasury",
-            "offset": 0,
-            "slot": "204",
-            "type": "t_contract(TreasuryInterface)1705",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:52"
-          },
-          {
             "label": "vync",
             "offset": 0,
-            "slot": "205",
-            "type": "t_contract(IERC20)1496",
+            "slot": "155",
+            "type": "t_contract(IERC20)687",
             "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:76"
+            "src": "contracts/BusdVyncStake.sol:74"
           },
           {
             "label": "busd",
             "offset": 0,
-            "slot": "206",
-            "type": "t_contract(IERC20)1496",
+            "slot": "156",
+            "type": "t_contract(IERC20)687",
             "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:77"
+            "src": "contracts/BusdVyncStake.sol:75"
           },
           {
             "label": "router",
             "offset": 0,
-            "slot": "207",
-            "type": "t_contract(IUniswapV2Router02)8789",
+            "slot": "157",
+            "type": "t_contract(IUniswapV2Router02)4462",
             "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:78"
+            "src": "contracts/BusdVyncStake.sol:76"
           },
           {
             "label": "factory",
             "offset": 0,
-            "slot": "208",
-            "type": "t_contract(IUniswapV2Factory)8154",
+            "slot": "158",
+            "type": "t_contract(IUniswapV2Factory)3827",
             "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:79"
+            "src": "contracts/BusdVyncStake.sol:77"
           },
           {
             "label": "lpToken",
             "offset": 0,
-            "slot": "209",
+            "slot": "159",
             "type": "t_address",
             "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:81"
+            "src": "contracts/BusdVyncStake.sol:79"
           },
           {
             "label": "MAX_INT",
             "offset": 0,
-            "slot": "210",
+            "slot": "160",
+            "type": "t_uint256",
+            "contract": "BUSDVYNCSTAKE",
+            "src": "contracts/BusdVyncStake.sol:80"
+          },
+          {
+            "label": "decimal18",
+            "offset": 0,
+            "slot": "161",
+            "type": "t_uint256",
+            "contract": "BUSDVYNCSTAKE",
+            "src": "contracts/BusdVyncStake.sol:81"
+          },
+          {
+            "label": "decimal4",
+            "offset": 0,
+            "slot": "162",
             "type": "t_uint256",
             "contract": "BUSDVYNCSTAKE",
             "src": "contracts/BusdVyncStake.sol:82"
           },
           {
-            "label": "decimal18",
+            "label": "userInfo",
             "offset": 0,
-            "slot": "211",
-            "type": "t_uint256",
+            "slot": "163",
+            "type": "t_mapping(t_address,t_struct(userInfoData)854_storage)",
             "contract": "BUSDVYNCSTAKE",
             "src": "contracts/BusdVyncStake.sol:83"
           },
           {
-            "label": "decimal4",
+            "label": "stakeInfo",
             "offset": 0,
-            "slot": "212",
-            "type": "t_uint256",
+            "slot": "164",
+            "type": "t_struct(stakeInfoData)825_storage",
             "contract": "BUSDVYNCSTAKE",
             "src": "contracts/BusdVyncStake.sol:84"
           },
           {
-            "label": "userInfo",
+            "label": "s",
             "offset": 0,
-            "slot": "213",
-            "type": "t_mapping(t_address,t_struct(userInfoData)1755_storage)",
+            "slot": "166",
+            "type": "t_uint256",
             "contract": "BUSDVYNCSTAKE",
             "src": "contracts/BusdVyncStake.sol:85"
           },
           {
-            "label": "stakeInfo",
+            "label": "u",
             "offset": 0,
-            "slot": "214",
-            "type": "t_struct(stakeInfoData)1726_storage",
+            "slot": "167",
+            "type": "t_uint256",
             "contract": "BUSDVYNCSTAKE",
             "src": "contracts/BusdVyncStake.sol:86"
           },
           {
-            "label": "s",
+            "label": "totalSupply",
             "offset": 0,
-            "slot": "216",
+            "slot": "168",
             "type": "t_uint256",
             "contract": "BUSDVYNCSTAKE",
             "src": "contracts/BusdVyncStake.sol:87"
-          },
-          {
-            "label": "u",
-            "offset": 0,
-            "slot": "217",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:88"
-          },
-          {
-            "label": "totalSupply",
-            "offset": 0,
-            "slot": "218",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:89"
           }
         ],
         "types": {
@@ -240,31 +233,31 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(GetDataInterface)1697": {
+          "t_contract(GetDataInterface)796": {
             "label": "contract GetDataInterface",
             "numberOfBytes": "20"
           },
-          "t_contract(IERC20)1496": {
+          "t_contract(IERC20)687": {
             "label": "contract IERC20",
             "numberOfBytes": "20"
           },
-          "t_contract(IUniswapV2Factory)8154": {
+          "t_contract(IUniswapV2Factory)3827": {
             "label": "contract IUniswapV2Factory",
             "numberOfBytes": "20"
           },
-          "t_contract(IUniswapV2Router02)8789": {
+          "t_contract(IUniswapV2Router02)4462": {
             "label": "contract IUniswapV2Router02",
             "numberOfBytes": "20"
           },
-          "t_contract(TreasuryInterface)1705": {
+          "t_contract(TreasuryInterface)804": {
             "label": "contract TreasuryInterface",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_struct(userInfoData)1755_storage)": {
+          "t_mapping(t_address,t_struct(userInfoData)854_storage)": {
             "label": "mapping(address => struct BUSDVYNCSTAKE.userInfoData)",
             "numberOfBytes": "32"
           },
-          "t_struct(stakeInfoData)1726_storage": {
+          "t_struct(stakeInfoData)825_storage": {
             "label": "struct BUSDVYNCSTAKE.stakeInfoData",
             "members": [
               {
@@ -282,7 +275,7 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(userInfoData)1755_storage": {
+          "t_struct(userInfoData)854_storage": {
             "label": "struct BUSDVYNCSTAKE.userInfoData",
             "members": [
               {
@@ -375,584 +368,219 @@
           "t_uint256": {
             "label": "uint256",
             "numberOfBytes": "32"
-          }
-        }
-      }
-    },
-    "ecc51a9ce98e3108fa786385f8d1eadec5917990fcd4f251ccdaadbcec6b4a4b": {
-      "address": "0x8535e6b68931a872922b16e3b3A71784d5bE502D",
-      "txHash": "0x8250c644dce7410bd53801c8f7920b13bcfdc3e4969d7243d6cb19c7ef307b8e",
-      "layout": {
-        "storage": [
-          {
-            "label": "initialized",
-            "offset": 0,
-            "slot": "0",
-            "type": "t_bool",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:21"
           },
-          {
-            "label": "initializing",
-            "offset": 1,
-            "slot": "0",
-            "type": "t_bool",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:26"
-          },
-          {
-            "label": "______gap",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:61"
-          },
-          {
-            "label": "_notEntered",
-            "offset": 0,
-            "slot": "51",
-            "type": "t_bool",
-            "contract": "ReentrancyGuardUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol:21"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "52",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "ReentrancyGuardUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol:63"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "101",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "ContextUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol:37"
-          },
-          {
-            "label": "_owner",
-            "offset": 0,
-            "slot": "151",
-            "type": "t_address",
-            "contract": "OwnableUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol:18"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "152",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "OwnableUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol:78"
-          },
-          {
-            "label": "dataAddress",
-            "offset": 0,
-            "slot": "201",
-            "type": "t_address",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:49"
-          },
-          {
-            "label": "data",
-            "offset": 0,
-            "slot": "202",
-            "type": "t_contract(GetDataInterface)1272",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:50"
-          },
-          {
-            "label": "TreasuryAddress",
-            "offset": 0,
-            "slot": "203",
-            "type": "t_address",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:51"
-          },
-          {
-            "label": "treasury",
-            "offset": 0,
-            "slot": "204",
-            "type": "t_contract(TreasuryInterface)1280",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:52"
-          },
-          {
-            "label": "vync",
-            "offset": 0,
-            "slot": "205",
-            "type": "t_contract(IERC20)1071",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:76"
-          },
-          {
-            "label": "busd",
-            "offset": 0,
-            "slot": "206",
-            "type": "t_contract(IERC20)1071",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:77"
-          },
-          {
-            "label": "router",
-            "offset": 0,
-            "slot": "207",
-            "type": "t_contract(IUniswapV2Router02)11417",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:78"
-          },
-          {
-            "label": "factory",
-            "offset": 0,
-            "slot": "208",
-            "type": "t_contract(IUniswapV2Factory)10782",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:79"
-          },
-          {
-            "label": "lpToken",
-            "offset": 0,
-            "slot": "209",
-            "type": "t_address",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:81"
-          },
-          {
-            "label": "MAX_INT",
-            "offset": 0,
-            "slot": "210",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:82"
-          },
-          {
-            "label": "decimal18",
-            "offset": 0,
-            "slot": "211",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:83"
-          },
-          {
-            "label": "decimal4",
-            "offset": 0,
-            "slot": "212",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:84"
-          },
-          {
-            "label": "userInfo",
-            "offset": 0,
-            "slot": "213",
-            "type": "t_mapping(t_address,t_struct(userInfoData)1330_storage)",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:85"
-          },
-          {
-            "label": "stakeInfo",
-            "offset": 0,
-            "slot": "214",
-            "type": "t_struct(stakeInfoData)1301_storage",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:86"
-          },
-          {
-            "label": "s",
-            "offset": 0,
-            "slot": "216",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:87"
-          },
-          {
-            "label": "u",
-            "offset": 0,
-            "slot": "217",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:88"
-          },
-          {
-            "label": "totalSupply",
-            "offset": 0,
-            "slot": "218",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKE",
-            "src": "contracts/BusdVyncStake.sol:89"
-          }
-        ],
-        "types": {
-          "t_address": {
-            "label": "address",
-            "numberOfBytes": "20"
-          },
-          "t_array(t_uint256)49_storage": {
-            "label": "uint256[49]",
-            "numberOfBytes": "1568"
-          },
-          "t_array(t_uint256)50_storage": {
-            "label": "uint256[50]",
-            "numberOfBytes": "1600"
-          },
-          "t_bool": {
-            "label": "bool",
+          "t_uint8": {
+            "label": "uint8",
             "numberOfBytes": "1"
-          },
-          "t_contract(GetDataInterface)1272": {
-            "label": "contract GetDataInterface",
-            "numberOfBytes": "20"
-          },
-          "t_contract(IERC20)1071": {
-            "label": "contract IERC20",
-            "numberOfBytes": "20"
-          },
-          "t_contract(IUniswapV2Factory)10782": {
-            "label": "contract IUniswapV2Factory",
-            "numberOfBytes": "20"
-          },
-          "t_contract(IUniswapV2Router02)11417": {
-            "label": "contract IUniswapV2Router02",
-            "numberOfBytes": "20"
-          },
-          "t_contract(TreasuryInterface)1280": {
-            "label": "contract TreasuryInterface",
-            "numberOfBytes": "20"
-          },
-          "t_mapping(t_address,t_struct(userInfoData)1330_storage)": {
-            "label": "mapping(address => struct BUSDVYNCSTAKE.userInfoData)",
-            "numberOfBytes": "32"
-          },
-          "t_struct(stakeInfoData)1301_storage": {
-            "label": "struct BUSDVYNCSTAKE.stakeInfoData",
-            "members": [
-              {
-                "label": "compoundStart",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "isCompoundStartSet",
-                "type": "t_bool",
-                "offset": 0,
-                "slot": "1"
-              }
-            ],
-            "numberOfBytes": "64"
-          },
-          "t_struct(userInfoData)1330_storage": {
-            "label": "struct BUSDVYNCSTAKE.userInfoData",
-            "members": [
-              {
-                "label": "lpAmount",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "stakeBalanceWithReward",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "1"
-              },
-              {
-                "label": "stakeBalance",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "2"
-              },
-              {
-                "label": "lastClaimedReward",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "3"
-              },
-              {
-                "label": "lastStakeUnstakeTimestamp",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "4"
-              },
-              {
-                "label": "lastClaimTimestamp",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "5"
-              },
-              {
-                "label": "isStaker",
-                "type": "t_bool",
-                "offset": 0,
-                "slot": "6"
-              },
-              {
-                "label": "totalClaimedReward",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "7"
-              },
-              {
-                "label": "autoClaimWithStakeUnstake",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "8"
-              },
-              {
-                "label": "pendingRewardAfterFullyUnstake",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "9"
-              },
-              {
-                "label": "isClaimAferUnstake",
-                "type": "t_bool",
-                "offset": 0,
-                "slot": "10"
-              },
-              {
-                "label": "nextCompoundDuringStakeUnstake",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "11"
-              },
-              {
-                "label": "nextCompoundDuringClaim",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "12"
-              },
-              {
-                "label": "lastCompoundedRewardWithStakeUnstakeClaim",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "13"
-              }
-            ],
-            "numberOfBytes": "448"
-          },
-          "t_uint256": {
-            "label": "uint256",
-            "numberOfBytes": "32"
           }
         }
       }
     },
-    "f5d53580b5ff58c185ad5eee89e166c72dbe9223c7add59ebf045a06fa30379d": {
-      "address": "0x3E8a529ba56638198A6408e110035C017Fc1bc3E",
-      "txHash": "0x9d4c91ae6230b9faf88e8c8257411a8243d14ab4c0c43cefc5fba831718600bc",
+    "07aeecc9a3b613c85187e17a678dde058733ad57d64768a0b5d86a04932eefb0": {
+      "address": "0x3DCC0AeC5CFe8092321De11D517C4Abd81f86B17",
+      "txHash": "0x59201c7f181083e85b82c57726040bf679b4f3ecaa13ceed633f72cdf8eba8bb",
       "layout": {
         "storage": [
           {
-            "label": "initialized",
+            "label": "_initialized",
             "offset": 0,
             "slot": "0",
-            "type": "t_bool",
+            "type": "t_uint8",
             "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:21"
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
           },
           {
-            "label": "initializing",
+            "label": "_initializing",
             "offset": 1,
             "slot": "0",
             "type": "t_bool",
             "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:26"
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
           },
           {
-            "label": "______gap",
+            "label": "_status",
             "offset": 0,
             "slot": "1",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:61"
+            "type": "t_uint256",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:38"
           },
           {
-            "label": "_notEntered",
+            "label": "__gap",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "ReentrancyGuardUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol:74"
+          },
+          {
+            "label": "__gap",
             "offset": 0,
             "slot": "51",
-            "type": "t_bool",
-            "contract": "ReentrancyGuardUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol:21"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "52",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "ReentrancyGuardUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol:63"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "101",
             "type": "t_array(t_uint256)50_storage",
-            "contract": "ContextUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol:37"
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
           },
           {
             "label": "_owner",
             "offset": 0,
-            "slot": "151",
+            "slot": "101",
             "type": "t_address",
-            "contract": "OwnableUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol:18"
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
           },
           {
             "label": "__gap",
             "offset": 0,
-            "slot": "152",
+            "slot": "102",
             "type": "t_array(t_uint256)49_storage",
-            "contract": "OwnableUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol:78"
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
           },
           {
             "label": "dataAddress",
             "offset": 0,
-            "slot": "201",
+            "slot": "151",
             "type": "t_address",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:49"
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:47"
           },
           {
             "label": "data",
             "offset": 0,
-            "slot": "202",
-            "type": "t_contract(GetDataInterface)7276",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:50"
+            "slot": "152",
+            "type": "t_contract(GetDataInterface)4579",
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:48"
           },
           {
             "label": "TreasuryAddress",
             "offset": 0,
-            "slot": "203",
+            "slot": "153",
             "type": "t_address",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:51"
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:49"
           },
           {
             "label": "treasury",
             "offset": 0,
-            "slot": "204",
-            "type": "t_contract(TreasuryInterface)7284",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:52"
+            "slot": "154",
+            "type": "t_contract(TreasuryInterface)4587",
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:50"
           },
           {
             "label": "vync",
             "offset": 0,
-            "slot": "205",
-            "type": "t_contract(IERC20)1071",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:76"
+            "slot": "155",
+            "type": "t_contract(IERC20)1378",
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:74"
           },
           {
             "label": "busd",
             "offset": 0,
-            "slot": "206",
-            "type": "t_contract(IERC20)1071",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:77"
+            "slot": "156",
+            "type": "t_contract(IERC20)1378",
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:75"
           },
           {
             "label": "router",
             "offset": 0,
-            "slot": "207",
-            "type": "t_contract(IUniswapV2Router02)14429",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:78"
+            "slot": "157",
+            "type": "t_contract(IUniswapV2Router02)8255",
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:76"
           },
           {
             "label": "factory",
             "offset": 0,
-            "slot": "208",
-            "type": "t_contract(IUniswapV2Factory)13794",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:79"
+            "slot": "158",
+            "type": "t_contract(IUniswapV2Factory)7620",
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:77"
           },
           {
             "label": "lpToken",
             "offset": 0,
-            "slot": "209",
+            "slot": "159",
             "type": "t_address",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:81"
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:79"
           },
           {
             "label": "MAX_INT",
             "offset": 0,
-            "slot": "210",
+            "slot": "160",
             "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:82"
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:80"
           },
           {
             "label": "decimal18",
             "offset": 0,
-            "slot": "211",
+            "slot": "161",
             "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:83"
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:81"
           },
           {
             "label": "decimal4",
             "offset": 0,
-            "slot": "212",
+            "slot": "162",
             "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:84"
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:82"
           },
           {
             "label": "userInfo",
             "offset": 0,
-            "slot": "213",
-            "type": "t_mapping(t_address,t_struct(userInfoData)7334_storage)",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:85"
+            "slot": "163",
+            "type": "t_mapping(t_address,t_struct(userInfoData)4637_storage)",
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:83"
           },
           {
             "label": "stakeInfo",
             "offset": 0,
-            "slot": "214",
-            "type": "t_struct(stakeInfoData)7305_storage",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:86"
+            "slot": "164",
+            "type": "t_struct(stakeInfoData)4608_storage",
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:84"
           },
           {
             "label": "s",
             "offset": 0,
-            "slot": "216",
+            "slot": "166",
             "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:87"
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:85"
           },
           {
             "label": "u",
             "offset": 0,
-            "slot": "217",
+            "slot": "167",
             "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:88"
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:86"
           },
           {
             "label": "totalSupply",
             "offset": 0,
-            "slot": "218",
+            "slot": "168",
             "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:89"
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:87"
           },
           {
             "label": "version",
             "offset": 0,
-            "slot": "219",
+            "slot": "169",
             "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV3",
-            "src": "contracts/BusdVyncStakeV3.sol:90"
+            "contract": "BUSDVYNCSTAKEV2",
+            "src": "contracts/BusdVyncStakeV2.sol:88"
           }
         ],
         "types": {
@@ -972,32 +600,32 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_contract(GetDataInterface)7276": {
+          "t_contract(GetDataInterface)4579": {
             "label": "contract GetDataInterface",
             "numberOfBytes": "20"
           },
-          "t_contract(IERC20)1071": {
+          "t_contract(IERC20)1378": {
             "label": "contract IERC20",
             "numberOfBytes": "20"
           },
-          "t_contract(IUniswapV2Factory)13794": {
+          "t_contract(IUniswapV2Factory)7620": {
             "label": "contract IUniswapV2Factory",
             "numberOfBytes": "20"
           },
-          "t_contract(IUniswapV2Router02)14429": {
+          "t_contract(IUniswapV2Router02)8255": {
             "label": "contract IUniswapV2Router02",
             "numberOfBytes": "20"
           },
-          "t_contract(TreasuryInterface)7284": {
+          "t_contract(TreasuryInterface)4587": {
             "label": "contract TreasuryInterface",
             "numberOfBytes": "20"
           },
-          "t_mapping(t_address,t_struct(userInfoData)7334_storage)": {
-            "label": "mapping(address => struct BUSDVYNCSTAKEV3.userInfoData)",
+          "t_mapping(t_address,t_struct(userInfoData)4637_storage)": {
+            "label": "mapping(address => struct BUSDVYNCSTAKEV2.userInfoData)",
             "numberOfBytes": "32"
           },
-          "t_struct(stakeInfoData)7305_storage": {
-            "label": "struct BUSDVYNCSTAKEV3.stakeInfoData",
+          "t_struct(stakeInfoData)4608_storage": {
+            "label": "struct BUSDVYNCSTAKEV2.stakeInfoData",
             "members": [
               {
                 "label": "compoundStart",
@@ -1014,8 +642,8 @@
             ],
             "numberOfBytes": "64"
           },
-          "t_struct(userInfoData)7334_storage": {
-            "label": "struct BUSDVYNCSTAKEV3.userInfoData",
+          "t_struct(userInfoData)4637_storage": {
+            "label": "struct BUSDVYNCSTAKEV2.userInfoData",
             "members": [
               {
                 "label": "lpAmount",
@@ -1107,376 +735,10 @@
           "t_uint256": {
             "label": "uint256",
             "numberOfBytes": "32"
-          }
-        }
-      }
-    },
-    "da3621386268f02082830fa24e327abe16a6bfa5f1a83e9ff5ee460f1aa8838d": {
-      "address": "0x7a3782E3479d52A5371a11fa04b06FCfDD9a35DE",
-      "txHash": "0xa75d15d184aa1cc31eecd4f319f1e48ae01d6324db04c783dbcf5559fd846fd7",
-      "layout": {
-        "storage": [
-          {
-            "label": "initialized",
-            "offset": 0,
-            "slot": "0",
-            "type": "t_bool",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:21"
           },
-          {
-            "label": "initializing",
-            "offset": 1,
-            "slot": "0",
-            "type": "t_bool",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:26"
-          },
-          {
-            "label": "______gap",
-            "offset": 0,
-            "slot": "1",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "Initializable",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol:61"
-          },
-          {
-            "label": "_notEntered",
-            "offset": 0,
-            "slot": "51",
-            "type": "t_bool",
-            "contract": "ReentrancyGuardUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol:21"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "52",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "ReentrancyGuardUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol:63"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "101",
-            "type": "t_array(t_uint256)50_storage",
-            "contract": "ContextUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/GSN/Context.sol:37"
-          },
-          {
-            "label": "_owner",
-            "offset": 0,
-            "slot": "151",
-            "type": "t_address",
-            "contract": "OwnableUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol:18"
-          },
-          {
-            "label": "__gap",
-            "offset": 0,
-            "slot": "152",
-            "type": "t_array(t_uint256)49_storage",
-            "contract": "OwnableUpgradeSafe",
-            "src": "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol:78"
-          },
-          {
-            "label": "dataAddress",
-            "offset": 0,
-            "slot": "201",
-            "type": "t_address",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:49"
-          },
-          {
-            "label": "data",
-            "offset": 0,
-            "slot": "202",
-            "type": "t_contract(GetDataInterface)10280",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:50"
-          },
-          {
-            "label": "TreasuryAddress",
-            "offset": 0,
-            "slot": "203",
-            "type": "t_address",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:51"
-          },
-          {
-            "label": "treasury",
-            "offset": 0,
-            "slot": "204",
-            "type": "t_contract(TreasuryInterface)10288",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:52"
-          },
-          {
-            "label": "vync",
-            "offset": 0,
-            "slot": "205",
-            "type": "t_contract(IERC20)1071",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:76"
-          },
-          {
-            "label": "busd",
-            "offset": 0,
-            "slot": "206",
-            "type": "t_contract(IERC20)1071",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:77"
-          },
-          {
-            "label": "router",
-            "offset": 0,
-            "slot": "207",
-            "type": "t_contract(IUniswapV2Router02)14429",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:78"
-          },
-          {
-            "label": "factory",
-            "offset": 0,
-            "slot": "208",
-            "type": "t_contract(IUniswapV2Factory)13794",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:79"
-          },
-          {
-            "label": "lpToken",
-            "offset": 0,
-            "slot": "209",
-            "type": "t_address",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:81"
-          },
-          {
-            "label": "MAX_INT",
-            "offset": 0,
-            "slot": "210",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:82"
-          },
-          {
-            "label": "decimal18",
-            "offset": 0,
-            "slot": "211",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:83"
-          },
-          {
-            "label": "decimal4",
-            "offset": 0,
-            "slot": "212",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:84"
-          },
-          {
-            "label": "userInfo",
-            "offset": 0,
-            "slot": "213",
-            "type": "t_mapping(t_address,t_struct(userInfoData)10338_storage)",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:85"
-          },
-          {
-            "label": "stakeInfo",
-            "offset": 0,
-            "slot": "214",
-            "type": "t_struct(stakeInfoData)10309_storage",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:86"
-          },
-          {
-            "label": "s",
-            "offset": 0,
-            "slot": "216",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:87"
-          },
-          {
-            "label": "u",
-            "offset": 0,
-            "slot": "217",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:88"
-          },
-          {
-            "label": "totalSupply",
-            "offset": 0,
-            "slot": "218",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:89"
-          },
-          {
-            "label": "version",
-            "offset": 0,
-            "slot": "219",
-            "type": "t_uint256",
-            "contract": "BUSDVYNCSTAKEV4",
-            "src": "contracts/BusdVyncStakeV4.sol:90"
-          }
-        ],
-        "types": {
-          "t_address": {
-            "label": "address",
-            "numberOfBytes": "20"
-          },
-          "t_array(t_uint256)49_storage": {
-            "label": "uint256[49]",
-            "numberOfBytes": "1568"
-          },
-          "t_array(t_uint256)50_storage": {
-            "label": "uint256[50]",
-            "numberOfBytes": "1600"
-          },
-          "t_bool": {
-            "label": "bool",
+          "t_uint8": {
+            "label": "uint8",
             "numberOfBytes": "1"
-          },
-          "t_contract(GetDataInterface)10280": {
-            "label": "contract GetDataInterface",
-            "numberOfBytes": "20"
-          },
-          "t_contract(IERC20)1071": {
-            "label": "contract IERC20",
-            "numberOfBytes": "20"
-          },
-          "t_contract(IUniswapV2Factory)13794": {
-            "label": "contract IUniswapV2Factory",
-            "numberOfBytes": "20"
-          },
-          "t_contract(IUniswapV2Router02)14429": {
-            "label": "contract IUniswapV2Router02",
-            "numberOfBytes": "20"
-          },
-          "t_contract(TreasuryInterface)10288": {
-            "label": "contract TreasuryInterface",
-            "numberOfBytes": "20"
-          },
-          "t_mapping(t_address,t_struct(userInfoData)10338_storage)": {
-            "label": "mapping(address => struct BUSDVYNCSTAKEV4.userInfoData)",
-            "numberOfBytes": "32"
-          },
-          "t_struct(stakeInfoData)10309_storage": {
-            "label": "struct BUSDVYNCSTAKEV4.stakeInfoData",
-            "members": [
-              {
-                "label": "compoundStart",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "isCompoundStartSet",
-                "type": "t_bool",
-                "offset": 0,
-                "slot": "1"
-              }
-            ],
-            "numberOfBytes": "64"
-          },
-          "t_struct(userInfoData)10338_storage": {
-            "label": "struct BUSDVYNCSTAKEV4.userInfoData",
-            "members": [
-              {
-                "label": "lpAmount",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "0"
-              },
-              {
-                "label": "stakeBalanceWithReward",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "1"
-              },
-              {
-                "label": "stakeBalance",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "2"
-              },
-              {
-                "label": "lastClaimedReward",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "3"
-              },
-              {
-                "label": "lastStakeUnstakeTimestamp",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "4"
-              },
-              {
-                "label": "lastClaimTimestamp",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "5"
-              },
-              {
-                "label": "isStaker",
-                "type": "t_bool",
-                "offset": 0,
-                "slot": "6"
-              },
-              {
-                "label": "totalClaimedReward",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "7"
-              },
-              {
-                "label": "autoClaimWithStakeUnstake",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "8"
-              },
-              {
-                "label": "pendingRewardAfterFullyUnstake",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "9"
-              },
-              {
-                "label": "isClaimAferUnstake",
-                "type": "t_bool",
-                "offset": 0,
-                "slot": "10"
-              },
-              {
-                "label": "nextCompoundDuringStakeUnstake",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "11"
-              },
-              {
-                "label": "nextCompoundDuringClaim",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "12"
-              },
-              {
-                "label": "lastCompoundedRewardWithStakeUnstakeClaim",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "13"
-              }
-            ],
-            "numberOfBytes": "448"
-          },
-          "t_uint256": {
-            "label": "uint256",
-            "numberOfBytes": "32"
           }
         }
       }

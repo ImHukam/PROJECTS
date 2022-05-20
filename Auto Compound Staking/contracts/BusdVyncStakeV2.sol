@@ -1,20 +1,18 @@
 //SPDX-License-Identifier: MIT
 // contract call swap function from pancakeswap, PanckeSwap takes fees from the users to swap assets
 
-pragma solidity 0.8.13;
+pragma solidity ^0.8.0;
 
 // change 1: import Initializable from openzeppelin
 // Import Ownable from the OpenZeppelin Contracts library
-import "@openzeppelin/contracts-ethereum-package/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts-ethereum-package/contracts/Initializable.sol";
-import "@openzeppelin/contracts-ethereum-package/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IUniswapV2Router.sol";
 import "./interfaces/IUniswapV2Factory.sol";
 import "./interfaces/IUniswapV2Pair.sol";
-// import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@uniswap/v2-core/contracts/libraries/Math.sol";
 
 interface GetDataInterface {
@@ -45,7 +43,7 @@ interface TreasuryInterface {
 
 // change 2: made the contract initializable as contracts upgradable with proxies can have constructor of their own
 
-contract BUSDVYNCSTAKEV2 is Initializable, ReentrancyGuardUpgradeSafe, OwnableUpgradeSafe {
+contract BUSDVYNCSTAKEV2 is Initializable, ReentrancyGuardUpgradeable, OwnableUpgradeable {
     address public dataAddress;
     GetDataInterface data;
     address public TreasuryAddress;
@@ -87,6 +85,7 @@ contract BUSDVYNCSTAKEV2 is Initializable, ReentrancyGuardUpgradeSafe, OwnableUp
     uint256 s; // total staking amount
     uint256 u; //total unstaking amount
     uint256 public totalSupply;
+    uint256 public version;
 
     event rewardClaim(address indexed user, uint256 rewards);
     event Stake(address account, uint256 stakeAmount);
@@ -103,8 +102,8 @@ contract BUSDVYNCSTAKEV2 is Initializable, ReentrancyGuardUpgradeSafe, OwnableUp
 
     // change 4: converted the constructor to initialize function to do the same as the constructor was doing
     function initialize() public initializer {
-        __Context_init_unchained();
         __Ownable_init_unchained();
+        __ReentrancyGuard_init_unchained();
 
         stakeInfo.compoundStart = block.timestamp;
         dataAddress = 0xa5e489407C8C3B2E345B073Aab3b9E1789370D9d;
@@ -165,6 +164,7 @@ contract BUSDVYNCSTAKEV2 is Initializable, ReentrancyGuardUpgradeSafe, OwnableUp
         getSwappingPair().approve(address(router), MAX_INT);
     }
 
+    // reentrancy removed
     function stake(uint256 amount) external nonReentrant {
         (
             uint256 maxStakePerTx,
@@ -254,6 +254,7 @@ contract BUSDVYNCSTAKEV2 is Initializable, ReentrancyGuardUpgradeSafe, OwnableUp
         emit Stake(msg.sender, (busdAdded + amountToSwap));
     }
 
+    // reentrancy removed
     function unStake(uint256 amount, uint256 unstakeOption)
         external
         nonReentrant
@@ -624,6 +625,7 @@ contract BUSDVYNCSTAKEV2 is Initializable, ReentrancyGuardUpgradeSafe, OwnableUp
             cPendingReward(user);
     }
 
+    // reentrancy removed
     function claim() public nonReentrant {
         require(
             userInfo[msg.sender].isStaker == true ||
@@ -845,5 +847,9 @@ contract BUSDVYNCSTAKEV2 is Initializable, ReentrancyGuardUpgradeSafe, OwnableUp
             block.timestamp
         );
         amountVync = vync.balanceOf(address(this)) - vyncBalanceBefore;
+    }
+
+    function newFunctionIntroduced() public view returns(address) {
+        return dataAddress;
     }
 }
