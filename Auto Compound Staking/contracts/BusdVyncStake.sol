@@ -139,13 +139,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     }
 
     function stake(uint256 amount) external nonReentrant {
-        (
-            uint256 maxStakePerTx,
-            ,
-            uint256 totalStakePerUser,
-            ,
-            uint256 slippage
-        ) = data.returnMaxStakeUnstakePriceSlippageData();
+        (uint256 maxStakePerTx, , uint256 totalStakePerUser, , ) = data
+            .returnMaxStakeUnstakePriceSlippageData();
         require(amount <= maxStakePerTx, "exceed max stake limit for a tx");
         require(
             (userInfo[msg.sender].stakeBalance + amount) <= totalStakePerUser,
@@ -187,16 +182,14 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
 
         uint256 vyncOut = swapBusdToVync(amountToSwap);
         uint256 amountLeft = amount - amountToSwap;
-        uint256 minimumVync = vyncOut - (vyncOut * slippage) / 100;
-        uint256 minimumBusd = amountLeft - (amountLeft * slippage) / 100;
 
         (, uint256 busdAdded, uint256 liquidityAmount) = router.addLiquidity(
             address(vync),
             address(busd),
             vyncOut,
             amountLeft,
-            minimumVync,
-            minimumBusd,
+            0,
+            0,
             address(this),
             block.timestamp
         );
@@ -256,10 +249,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             "withdraw: not good"
         );
         //remove liquidity
-        uint256 _busdAmount = amount >= stakeBalance ? stakeBalance : amount;
         (uint256 amountVync, uint256 amountBusd) = removeLiquidity(
-            lpAmountNeeded,
-            _busdAmount
+            lpAmountNeeded
         );
 
         uint256 _amount = swapVyncToBusd(amountVync) + amountBusd;
@@ -423,8 +414,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     {
         uint256 reward;
         reward = compoundedReward(user);
-        reward = reward * vyncPerBusd();
-        _compoundedVyncReward = reward / decimal18;
+        (, , , uint256 price, ) = data.returnMaxStakeUnstakePriceSlippageData();
+        _compoundedVyncReward = (reward * decimal4) / price;
     }
 
     function pendingReward(address user)
@@ -486,8 +477,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     {
         uint256 reward;
         reward = pendingReward(user);
-        reward = reward * vyncPerBusd();
-        _pendingVyncReward = reward / decimal18;
+        (, , , uint256 price, ) = data.returnMaxStakeUnstakePriceSlippageData();
+        _pendingVyncReward = (reward * decimal4) / price;
     }
 
     function lastCompoundedReward(address user)
@@ -645,22 +636,6 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         }
     }
 
-    function vyncPerBusd() public view returns (uint256 _vyncPerBusd) {
-        uint256 _busd = busd.balanceOf(lpToken);
-        uint256 _vync = vync.balanceOf(lpToken);
-        _vync = _vync * decimal18;
-
-        _vyncPerBusd = _vync / _busd;
-    }
-
-    function vyncRateInBusd() public view returns (uint256 _vyncRateInBusd) {
-        uint256 _busd = busd.balanceOf(lpToken);
-        uint256 _vync = vync.balanceOf(lpToken);
-        _vync = _vync / decimal4;
-
-        _vyncRateInBusd = _busd / _vync;
-    }
-
     function totalStake() external view returns (uint256 stakingAmount) {
         stakingAmount = s;
     }
@@ -712,15 +687,10 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         internal
         returns (uint256 amountOut)
     {
-        (, , , , uint256 slippage) = data
-            .returnMaxStakeUnstakePriceSlippageData();
         uint256 vyncBalanceBefore = vync.balanceOf(address(this));
-        uint256 vyncAmount = amountToSwap * vyncPerBusd();
-        vyncAmount = vyncAmount / decimal18;
-        uint256 minimumVyncAmount = vyncAmount - (vyncAmount * slippage) / 100;
         router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
             amountToSwap,
-            minimumVyncAmount,
+            0,
             getBusdVyncRoute(),
             address(this),
             block.timestamp
@@ -732,15 +702,10 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         internal
         returns (uint256 amountOut)
     {
-        (, , , , uint256 slippage) = data
-            .returnMaxStakeUnstakePriceSlippageData();
         uint256 busdBalanceBefore = busd.balanceOf(address(this));
-        uint256 busdAmount = amountToSwap * vyncRateInBusd();
-        busdAmount = busdAmount / decimal4;
-        uint256 minimumBusdAmount = busdAmount - (busdAmount * slippage) / 100;
         router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
             amountToSwap,
-            minimumBusdAmount,
+            0,
             getVyncBusdRoute(),
             address(this),
             block.timestamp
@@ -789,31 +754,17 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         lpNeeded = (amount * (getSwappingPair().totalSupply())) / (res1) / 2;
     }
 
-    function removeLiquidity(uint256 lpAmount, uint256 busdAmount)
+    function removeLiquidity(uint256 lpAmount)
         internal
         returns (uint256 amountVync, uint256 amountBusd)
     {
-        (, , , , uint256 slippage) = data
-            .returnMaxStakeUnstakePriceSlippageData();
-        (, uint256 res1, ) = getSwappingPair().getReserves();
-        uint256 busdAmountForVync = calculateSwapInAmount(res1, busdAmount);
-        uint256 leftBusdAmount = busdAmount - busdAmountForVync;
-
-        uint256 vyncAmount = busdAmountForVync * vyncPerBusd();
-        vyncAmount = vyncAmount / decimal18;
-
-        uint256 minimumVync = vyncAmount - (vyncAmount * slippage) / 100;
-        uint256 minimumBusd = leftBusdAmount -
-            (leftBusdAmount * slippage) /
-            100;
-
         uint256 vyncBalanceBefore = vync.balanceOf(address(this));
         (, amountBusd) = router.removeLiquidity(
             address(vync),
             address(busd),
             lpAmount,
-            minimumVync,
-            minimumBusd,
+            0,
+            0,
             address(this),
             block.timestamp
         );
