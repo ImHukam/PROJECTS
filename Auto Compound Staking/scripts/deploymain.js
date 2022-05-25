@@ -17,7 +17,7 @@ const treasury_abi = [
 ]
 
 const busd_address= "0xB57ab40Db50284f9F9e7244289eD57537262e147";
-const pool_address= "0xa5e489407C8C3B2E345B073Aab3b9E1789370D9d";
+const pool_address= "0x8Cdda3Ee614318b6363551F0bDE2Da9dE08e658B";
 const treasury_address = "0xA4FE6E8150770132c32e4204C2C1Ff59783eDfA0";
 const busdContract= new ethers.Contract(busd_address,busd_abi,provider);
 const poolContract= new ethers.Contract(pool_address,pool_abi,provider);
@@ -53,7 +53,7 @@ async function main() {
   await treasury.set_stakingpool(bUSDVYNCSTAKE.address, zero,zero);
   console.log("treasury pool update");
 
-  await bUSDVYNCSTAKE.set_data("0xa5e489407C8C3B2E345B073Aab3b9E1789370D9d");
+  await bUSDVYNCSTAKE.set_data("0x8Cdda3Ee614318b6363551F0bDE2Da9dE08e658B");
   console.log("set busd info pool to stake pool");
 
 
