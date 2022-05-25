@@ -21,16 +21,17 @@ interface GetDataInterface {
             uint256
         );
 
-    function returnMaxStakeUnstakePriceSlippageData()
+    function returnMaxStakeUnstakePrice()
         external
         view
         returns (
             uint256,
             uint256,
             uint256,
-            uint256,
             uint256
         );
+
+    function swapAmountCalculation(uint256 _amount) external view returns (uint256);
 }
 
 interface TreasuryInterface {
@@ -38,7 +39,7 @@ interface TreasuryInterface {
 }
 
 contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
-    address public dataAddress = 0xa5e489407C8C3B2E345B073Aab3b9E1789370D9d;
+    address public dataAddress = 0x8Cdda3Ee614318b6363551F0bDE2Da9dE08e658B;
     GetDataInterface data = GetDataInterface(dataAddress);
     address public TreasuryAddress = 0xA4FE6E8150770132c32e4204C2C1Ff59783eDfA0;
     TreasuryInterface treasury = TreasuryInterface(TreasuryAddress);
@@ -139,8 +140,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     }
 
     function stake(uint256 amount) external nonReentrant {
-        (uint256 maxStakePerTx, , uint256 totalStakePerUser, , ) = data
-            .returnMaxStakeUnstakePriceSlippageData();
+        (uint256 maxStakePerTx, , uint256 totalStakePerUser, ) = data
+            .returnMaxStakeUnstakePrice();
         require(amount <= maxStakePerTx, "exceed max stake limit for a tx");
         require(
             (userInfo[msg.sender].stakeBalance + amount) <= totalStakePerUser,
@@ -179,8 +180,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
 
         (, uint256 res1, ) = getSwappingPair().getReserves();
         uint256 amountToSwap = calculateSwapInAmount(res1, amount);
-
-        uint256 vyncOut = swapBusdToVync(amountToSwap);
+        uint256 minimumAmount = data.swapAmountCalculation(amountToSwap);
+        uint256 vyncOut = swapBusdToVync(amountToSwap, minimumAmount);
         uint256 amountLeft = amount - amountToSwap;
 
         (, uint256 busdAdded, uint256 liquidityAmount) = router.addLiquidity(
@@ -224,8 +225,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         external
         nonReentrant
     {
-        (, uint256 maxUnstakePerTx, , , ) = data
-            .returnMaxStakeUnstakePriceSlippageData();
+        (, uint256 maxUnstakePerTx, , ) = data.returnMaxStakeUnstakePrice();
         require(amount <= maxUnstakePerTx, "exceed unstake limit per tx");
         require(
             unstakeOption > 0 && unstakeOption <= 3,
@@ -252,8 +252,9 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         (uint256 amountVync, uint256 amountBusd) = removeLiquidity(
             lpAmountNeeded
         );
-
-        uint256 _amount = swapVyncToBusd(amountVync) + amountBusd;
+        uint256 minimumVyncAmount = data.swapAmountCalculation(amountVync);
+        uint256 _amount = swapVyncToBusd(amountVync, minimumVyncAmount) +
+            amountBusd;
         if (unstakeOption == 1) {
             require(
                 true == busd.transfer(msg.sender, _amount),
@@ -262,8 +263,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         } else if (unstakeOption == 2) {
             uint256 busdAmount = (_amount * up) / 100;
             uint256 vyncAmount = _amount - busdAmount;
-
-            uint256 _vyncAmount = swapBusdToVync(vyncAmount);
+            uint256 minimumAmount = data.swapAmountCalculation(vyncAmount);
+            uint256 _vyncAmount = swapBusdToVync(vyncAmount, minimumAmount);
             require(
                 true == busd.transfer(msg.sender, busdAmount),
                 "unable to transfer:busd,option2"
@@ -273,7 +274,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
                 "unable to transfer:vync,option2"
             );
         } else if (unstakeOption == 3) {
-            uint256 vyncAmount = swapBusdToVync(_amount);
+            uint256 minimumAmount = data.swapAmountCalculation(_amount);
+            uint256 vyncAmount = swapBusdToVync(_amount, minimumAmount);
             require(
                 true == vync.transfer(msg.sender, vyncAmount),
                 "unable to transfer:option3"
@@ -414,7 +416,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     {
         uint256 reward;
         reward = compoundedReward(user);
-        (, , , uint256 price, ) = data.returnMaxStakeUnstakePriceSlippageData();
+        (, , , uint256 price) = data.returnMaxStakeUnstakePrice();
         _compoundedVyncReward = (reward * decimal4) / price;
     }
 
@@ -477,7 +479,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     {
         uint256 reward;
         reward = pendingReward(user);
-        (, , , uint256 price, ) = data.returnMaxStakeUnstakePriceSlippageData();
+        (, , , uint256 price) = data.returnMaxStakeUnstakePrice();
         _pendingVyncReward = (reward * decimal4) / price;
     }
 
@@ -603,7 +605,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         uint256 reward = userInfo[msg.sender].lastClaimedReward +
             userInfo[msg.sender].autoClaimWithStakeUnstake;
         require(reward > 0, "can't reap zero reward");
-        (, , , uint256 price, ) = data.returnMaxStakeUnstakePriceSlippageData();
+        (, , , uint256 price) = data.returnMaxStakeUnstakePrice();
         reward = (reward * decimal4) / price;
 
         treasury.send(msg.sender, reward);
@@ -683,14 +685,14 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
 
     // this function call swap function from pancakeswap, PanckeSwap takes fees from the users for swap assets
 
-    function swapBusdToVync(uint256 amountToSwap)
+    function swapBusdToVync(uint256 amountToSwap, uint256 minAmount)
         internal
         returns (uint256 amountOut)
     {
         uint256 vyncBalanceBefore = vync.balanceOf(address(this));
         router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
             amountToSwap,
-            0,
+            minAmount,
             getBusdVyncRoute(),
             address(this),
             block.timestamp
@@ -698,14 +700,14 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         amountOut = vync.balanceOf(address(this)) - vyncBalanceBefore;
     }
 
-    function swapVyncToBusd(uint256 amountToSwap)
+    function swapVyncToBusd(uint256 amountToSwap, uint256 minimumAmount)
         internal
         returns (uint256 amountOut)
     {
         uint256 busdBalanceBefore = busd.balanceOf(address(this));
         router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
             amountToSwap,
-            0,
+            minimumAmount,
             getVyncBusdRoute(),
             address(this),
             block.timestamp
