@@ -72,22 +72,20 @@ contract VyncBusdPoolInfo is Ownable {
         _up = up;
     }
 
-    function returnMaxStakeUnstakePriceSlippageData()
+    function returnMaxStakeUnstakePrice()
         external
         view
         returns (
             uint256 _maxStakePerTx,
             uint256 _maxUnstakePerTx,
             uint256 _totalStakePerUser,
-            uint256 _price,
-            uint256 _slippage
+            uint256 _price
         )
     {
         _maxStakePerTx = maxStakePerTx;
         _maxUnstakePerTx = maxUnstakePerTx;
         _totalStakePerUser = totalStakePerUser;
         _price= price;
-        _slippage=  slippage;
     }
 
     function set_VyncBusd(address _VyncBusd) public onlyOwner {
@@ -185,8 +183,11 @@ contract VyncBusdPoolInfo is Ownable {
         priceSetAddress = _address;
     }
 
-    function set_slippage(uint256 _slippage) public onlyOwner {
+   function set_slippage(uint256 _slippage) public onlyOwner {
         require(_slippage > 0 && _slippage <= 90, "invalid slippage range");
         slippage = _slippage;
+    }
+
+    function swapAmountCalculation(uint256 _amount) external view returns(uint256 amount){
     }
 }
