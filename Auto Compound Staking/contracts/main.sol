@@ -1,6 +1,4 @@
-//SPDX-License-Identifier: MIT
-// contract call swap function from pancakeswap, PanckeSwap takes fees from the users to swap assets
-
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -31,15 +29,20 @@ interface GetDataInterface {
             uint256
         );
 
-    function swapAmountCalculation(uint256 _amount) external view returns (uint256);
+    function swapAmountCalculation(uint256 _amount)
+        external
+        view
+        returns (uint256);
 }
 
 interface TreasuryInterface {
     function send(address, uint256) external;
 }
 
-contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
-    address public dataAddress = 0x8Cdda3Ee614318b6363551F0bDE2Da9dE08e658B;
+contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
+    using SafeMath for uint256;
+
+    address public dataAddress = 0x6034D4d394E2aaC02BA02c7b02650493F221Bcac;
     GetDataInterface data = GetDataInterface(dataAddress);
     address public TreasuryAddress = 0xA4FE6E8150770132c32e4204C2C1Ff59783eDfA0;
     TreasuryInterface treasury = TreasuryInterface(TreasuryAddress);
@@ -67,17 +70,21 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     }
 
     IERC20 public vync = IERC20(0x71BE9BA58e0271b967a980eD8e59C07fF2108C85);
-    IERC20 public busd = IERC20(0xB57ab40Db50284f9F9e7244289eD57537262e147);
+
     IUniswapV2Router02 public router =
         IUniswapV2Router02(0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3);
     IUniswapV2Factory public factory =
         IUniswapV2Factory(0xB7926C0430Afb07AA7DEfDE6DA862aE0Bde767bc);
+    address lpToken = 0x6891cFd3B1A5282B608a1F6921BC7e5130436db3;
 
-    address lpToken = 0x265c77B2FbD3e10A2Ce3f7991854c80F3eCc9089;
+    IERC20 public bnb = IERC20(router.WETH());
+
     uint256 public constant MAX_INT =
         115792089237316195423570985008687907853269984665640564039457584007913129639935;
+
     uint256 decimal18 = 1e18;
     uint256 decimal4 = 1e4;
+
     mapping(address => userInfoData) public userInfo;
     stakeInfoData public stakeInfo;
     uint256 s; // total staking amount
@@ -135,11 +142,12 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
 
     function approve() public {
         vync.approve(address(router), MAX_INT);
-        busd.approve(address(router), MAX_INT);
+        bnb.approve(address(router), MAX_INT);
         getSwappingPair().approve(address(router), MAX_INT);
     }
 
-    function stake(uint256 amount) external nonReentrant {
+    function stake() external payable nonReentrant {
+        uint256 amount = msg.value;
         (uint256 maxStakePerTx, , uint256 totalStakePerUser, ) = data
             .returnMaxStakeUnstakePrice();
         require(amount <= maxStakePerTx, "exceed max stake limit for a tx");
@@ -147,10 +155,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             (userInfo[msg.sender].stakeBalance + amount) <= totalStakePerUser,
             "exceed total stake limit"
         );
-        require(
-            busd.transferFrom(msg.sender, address(this), amount),
-            "unable to transfer"
-        );
+
         userInfo[msg.sender]
             .lastCompoundedRewardWithStakeUnstakeClaim = lastCompoundedReward(
             msg.sender
@@ -165,6 +170,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             userInfo[msg.sender].autoClaimWithStakeUnstake =
                 userInfo[msg.sender].autoClaimWithStakeUnstake +
                 _pendingReward;
+
             if (
                 block.timestamp <
                 userInfo[msg.sender].nextCompoundDuringStakeUnstake
@@ -181,19 +187,12 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         (, uint256 res1, ) = getSwappingPair().getReserves();
         uint256 amountToSwap = calculateSwapInAmount(res1, amount);
         uint256 minimumAmount = data.swapAmountCalculation(amountToSwap);
-        uint256 vyncOut = swapBusdToVync(amountToSwap, minimumAmount);
+        uint256 vyncOut = swapbnbToVync(amountToSwap, minimumAmount);
         uint256 amountLeft = amount - amountToSwap;
 
-        (, uint256 busdAdded, uint256 liquidityAmount) = router.addLiquidity(
-            address(vync),
-            address(busd),
-            vyncOut,
-            amountLeft,
-            0,
-            0,
-            address(this),
-            block.timestamp
-        );
+        (, uint256 bnbAdded, uint256 liquidityAmount) = router.addLiquidityETH{
+            value: amountLeft
+        }(address(vync), vyncOut, 0, 0, address(this), block.timestamp);
 
         //update state
         userInfo[msg.sender].lpAmount =
@@ -202,23 +201,20 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         totalSupply = totalSupply + liquidityAmount;
         userInfo[msg.sender].stakeBalanceWithReward =
             userInfo[msg.sender].stakeBalanceWithReward +
-            (busdAdded + amountToSwap);
+            (bnbAdded + amountToSwap);
         userInfo[msg.sender].stakeBalance =
             userInfo[msg.sender].stakeBalance +
-            (busdAdded + amountToSwap);
+            (bnbAdded + amountToSwap);
         userInfo[msg.sender].lastStakeUnstakeTimestamp = block.timestamp;
         userInfo[msg.sender].nextCompoundDuringStakeUnstake = nextCompound();
         userInfo[msg.sender].isStaker = true;
 
         // trasnfer back amount left
-        if (amount > busdAdded + amountToSwap) {
-            require(
-                busd.transfer(msg.sender, amount - (busdAdded + amountToSwap)),
-                "unable to transfer left amount"
-            );
+        if (amount > bnbAdded + amountToSwap) {
+            payable(msg.sender).transfer(amount - (bnbAdded + amountToSwap));
         }
-        s = s + busdAdded + amountToSwap;
-        emit Stake(msg.sender, (busdAdded + amountToSwap));
+        s = s + bnbAdded + amountToSwap;
+        emit Stake(msg.sender, (bnbAdded + amountToSwap));
     }
 
     function unStake(uint256 amount, uint256 unstakeOption)
@@ -248,50 +244,42 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             userInfo[msg.sender].lpAmount >= lpAmountNeeded,
             "withdraw: not good"
         );
-        //remove liquidity
-        (uint256 amountVync, uint256 amountBusd) = removeLiquidity(
+        //removeliquidity
+        (uint256 amountVync, uint256 amountbnb) = removeLiquidity(
             lpAmountNeeded
         );
+
         uint256 minimumVyncAmount = data.swapAmountCalculation(amountVync);
-        uint256 _amount = swapVyncToBusd(amountVync, minimumVyncAmount) +
-            amountBusd;
+        uint256 _amount = swapVyncTobnb(amountVync, minimumVyncAmount) +
+            amountbnb;
+
         if (unstakeOption == 1) {
-            require(
-                true == busd.transfer(msg.sender, _amount),
-                "unable to transfer: option1"
-            );
+            payable(msg.sender).transfer(_amount);
         } else if (unstakeOption == 2) {
-            uint256 busdAmount = (_amount * up) / 100;
-            uint256 vyncAmount = _amount - busdAmount;
+            uint256 bnbAmount = (_amount * up) / 100;
+            uint256 vyncAmount = _amount - bnbAmount;
             uint256 minimumAmount = data.swapAmountCalculation(vyncAmount);
-            uint256 _vyncAmount = swapBusdToVync(vyncAmount, minimumAmount);
-            require(
-                true == busd.transfer(msg.sender, busdAmount),
-                "unable to transfer:busd,option2"
-            );
-            require(
-                true == vync.transfer(msg.sender, _vyncAmount),
-                "unable to transfer:vync,option2"
-            );
+            uint256 _vyncAmount = swapbnbToVync(vyncAmount, minimumAmount);
+            payable(msg.sender).transfer(bnbAmount);
+            vync.transfer(msg.sender, _vyncAmount);
         } else if (unstakeOption == 3) {
             uint256 minimumAmount = data.swapAmountCalculation(_amount);
-            uint256 vyncAmount = swapBusdToVync(_amount, minimumAmount);
-            require(
-                true == vync.transfer(msg.sender, vyncAmount),
-                "unable to transfer:option3"
-            );
+            uint256 vyncAmount = swapbnbToVync(_amount, minimumAmount);
+            vync.transfer(msg.sender, vyncAmount);
         }
 
         emit UnStake(msg.sender, amount);
 
         // reward update
         if (amount < stakeBalance) {
+            uint256 _pendingReward = compoundedReward(msg.sender);
+
             userInfo[msg.sender]
                 .lastCompoundedRewardWithStakeUnstakeClaim = lastCompoundedReward(
                 msg.sender
             );
 
-            userInfo[msg.sender].autoClaimWithStakeUnstake = pending;
+            userInfo[msg.sender].autoClaimWithStakeUnstake = _pendingReward;
 
             // update state
 
@@ -299,9 +287,9 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             userInfo[msg.sender]
                 .nextCompoundDuringStakeUnstake = nextCompound();
 
-            userInfo[msg.sender].lpAmount =
-                userInfo[msg.sender].lpAmount -
-                lpAmountNeeded;
+            userInfo[msg.sender].lpAmount = userInfo[msg.sender].lpAmount.sub(
+                lpAmountNeeded
+            );
             userInfo[msg.sender].stakeBalanceWithReward =
                 userInfo[msg.sender].stakeBalanceWithReward -
                 _amount;
@@ -327,6 +315,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         if (userInfo[msg.sender].pendingRewardAfterFullyUnstake == 0) {
             userInfo[msg.sender].isClaimAferUnstake = false;
         }
+
         totalSupply = totalSupply - lpAmountNeeded;
     }
 
@@ -376,7 +365,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         uint256 balance = userInfo[user].stakeBalanceWithReward + cpending;
 
         for (uint256 i = 1; i <= loopRound; i++) {
-            uint256 amount = balance + reward;
+            uint256 amount = balance.add(reward);
             reward = (amount * a) / 100;
             reward = reward / decimal18;
             _compoundedReward = _compoundedReward + reward;
@@ -573,6 +562,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             reward = (amount * a) / 100;
             reward = reward / decimal18;
             totalReward = totalReward + reward;
+            balance = amount;
         }
 
         if (userInfo[user].isClaimAferUnstake == true) {
@@ -596,6 +586,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
                 userInfo[msg.sender].isClaimAferUnstake == true,
             "user not staked"
         );
+
         userInfo[msg.sender]
             .lastCompoundedRewardWithStakeUnstakeClaim = lastCompoundedReward(
             msg.sender
@@ -651,27 +642,19 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         address _to,
         uint256 _amount
     ) public onlyOwner {
-        require(
-            _tokenAddress != lpToken &&
-                _tokenAddress != address(vync) &&
-                _tokenAddress != address(busd),
-            "can't withdraw vync,busd and lp tokens"
-        );
-        require(
-            true == IERC20(_tokenAddress).transfer(_to, _amount),
-            "unable to transfer"
-        );
+        require(_tokenAddress != lpToken, "can't withdraw lp tokens");
+        IERC20(_tokenAddress).transfer(_to, _amount);
     }
 
     function getSwappingPair() internal view returns (IUniswapV2Pair) {
-        return IUniswapV2Pair(factory.getPair(address(vync), address(busd)));
+        return IUniswapV2Pair(factory.getPair(address(vync), address(bnb)));
     }
 
     // following: https://blog.alphafinance.io/onesideduniswap/ zzb
     // applying f = 0.25% in PancakeSwap
     // we got these numbers
 
-    function calculateSwapInAmount(uint256 reserveIn, uint256 userIn)
+  function calculateSwapInAmount(uint256 reserveIn, uint256 userIn)
         internal
         pure
         returns (uint256)
@@ -683,48 +666,42 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         return amount;
     }
 
-    // this function call swap function from pancakeswap, PanckeSwap takes fees from the users for swap assets
-
-    function swapBusdToVync(uint256 amountToSwap, uint256 minAmount)
+    function swapbnbToVync(uint256 amountToSwap, uint256 minimumAmount)
         internal
         returns (uint256 amountOut)
     {
         uint256 vyncBalanceBefore = vync.balanceOf(address(this));
-        router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-            amountToSwap,
-            minAmount,
-            getBusdVyncRoute(),
-            address(this),
-            block.timestamp
-        );
+        router.swapExactETHForTokensSupportingFeeOnTransferTokens{
+            value: amountToSwap
+        }(minimumAmount, getbnbVyncRoute(), address(this), block.timestamp);
         amountOut = vync.balanceOf(address(this)) - vyncBalanceBefore;
     }
 
-    function swapVyncToBusd(uint256 amountToSwap, uint256 minimumAmount)
+    function swapVyncTobnb(uint256 amountToSwap, uint256 minimumAmount)
         internal
         returns (uint256 amountOut)
     {
-        uint256 busdBalanceBefore = busd.balanceOf(address(this));
-        router.swapExactTokensForTokensSupportingFeeOnTransferTokens(
+        uint256 bnbBalanceBefore = address(this).balance;
+        router.swapExactTokensForETHSupportingFeeOnTransferTokens(
             amountToSwap,
             minimumAmount,
-            getVyncBusdRoute(),
+            getVyncbnbRoute(),
             address(this),
             block.timestamp
         );
-        amountOut = busd.balanceOf(address(this)) - busdBalanceBefore;
+        amountOut = address(this).balance - bnbBalanceBefore;
     }
 
-    function getBusdVyncRoute() private view returns (address[] memory paths) {
+    function getbnbVyncRoute() private view returns (address[] memory paths) {
         paths = new address[](2);
-        paths[0] = address(busd);
+        paths[0] = address(bnb);
         paths[1] = address(vync);
     }
 
-    function getVyncBusdRoute() private view returns (address[] memory paths) {
+    function getVyncbnbRoute() private view returns (address[] memory paths) {
         paths = new address[](2);
         paths[0] = address(vync);
-        paths[1] = address(busd);
+        paths[1] = address(bnb);
     }
 
     function getReserveInAmount1ByLP(uint256 lp)
@@ -734,11 +711,10 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     {
         IUniswapV2Pair pair = getSwappingPair();
         uint256 balance0 = vync.balanceOf(address(pair));
-        uint256 balance1 = busd.balanceOf(address(pair));
+        uint256 balance1 = bnb.balanceOf(address(pair));
         uint256 _totalSupply = pair.totalSupply();
-        uint256 amount0 = (lp * balance0) / _totalSupply;
-        uint256 amount1 = (lp * balance1) / _totalSupply;
-
+        uint256 amount0 = lp.mul(balance0) / _totalSupply;
+        uint256 amount1 = lp.mul(balance1) / _totalSupply;
         // convert amount0 -> amount1
         amount = amount1 + ((amount0 * balance1) / balance0);
     }
@@ -758,12 +734,11 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
 
     function removeLiquidity(uint256 lpAmount)
         internal
-        returns (uint256 amountVync, uint256 amountBusd)
+        returns (uint256 amountVync, uint256 amountbnb)
     {
         uint256 vyncBalanceBefore = vync.balanceOf(address(this));
-        (, amountBusd) = router.removeLiquidity(
+        (amountbnb) = router.removeLiquidityETHSupportingFeeOnTransferTokens(
             address(vync),
-            address(busd),
             lpAmount,
             0,
             0,
@@ -772,4 +747,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         );
         amountVync = vync.balanceOf(address(this)) - vyncBalanceBefore;
     }
+
+    receive() external payable {}
+
+    fallback() external payable {}
 }
