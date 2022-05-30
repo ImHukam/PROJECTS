@@ -7,6 +7,10 @@ interface SetDataInterface {
     function totalStake() external view returns (uint256);
 
     function totalUnstake() external view returns (uint256);
+
+    function totalStakeInVync() external view returns (uint256);
+
+    function totalUnstakeInVync() external view returns (uint256);
 }
 
 contract VyncPoolInfo is Ownable {
@@ -16,16 +20,18 @@ contract VyncPoolInfo is Ownable {
     uint256 s; // total staking
     uint256 u; // total unstaking
     uint256 b; // available Staking
-    uint256 pl = 100000; // yearly interst;
-    bool r_ed = true; // r enable disable
+    uint256 s_v; // total staking in vync
+    uint256 u_v; // available stakiing in vync
+    uint256 pl = 100000; // yearly interst
+    bool r_ed = false; // r enable disable
     uint256 r; // extra apr basesd on yearly interst
-    uint256 apr = 1 * 1e4; //daily apr in 4 decimal
-    uint256 a; // total apr: r+apr;
+    uint256 apr = 1 * 1e18; //daily apr in 18 decimal
+    uint256 a; // total apr: r+apr
     uint256 compoundRate = 300; // compound rate in seconds
     uint256 up = 50; // unstake percentage
-    uint256 maxStakePerTx = 5000 * 1e4; // in 4 decimal
-    uint256 maxUnstakePerTx = 5000 * 1e4;
-    uint256 totalStakePerUser = 20000 * 1e4;
+    uint256 maxStakePerTx = 5000 * 1e18; //in term of usd, 18 decimal
+    uint256 maxUnstakePerTx = 5000 * 1e18; //in term f usd, 18 decimal
+    uint256 totalStakePerUser = 20000 * 1e18; //in term of usd, 18 decimal
 
     function poolInfo()
         external
@@ -34,6 +40,8 @@ contract VyncPoolInfo is Ownable {
             uint256 _s,
             uint256 _u,
             uint256 _b,
+            uint256 _s_v,
+            uint256 _u_v,
             uint256 _pl,
             bool _r_ed,
             uint256 _r,
@@ -46,6 +54,8 @@ contract VyncPoolInfo is Ownable {
         (_s, , ) = set_sub();
         (, _u, ) = set_sub();
         (, , _b) = set_sub();
+        _s_v= data.totalStakeInVync();
+        _u_v = data.totalUnstakeInVync();
         _pl = pl;
         _r_ed = r_ed;
         _r = set_r();
