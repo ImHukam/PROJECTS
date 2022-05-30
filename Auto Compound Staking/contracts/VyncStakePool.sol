@@ -6,6 +6,10 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+interface BusdPrice {
+    function price() external view returns (uint256); //price in 18 decimals
+}
+
 interface GetDataInterface {
     function returnData()
         external
@@ -33,8 +37,11 @@ interface TreasuryInterface {
 contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
     using SafeMath for uint256;
 
-    address public dataAddress = 0xBc77600E002bc5AF4f1d85bE1f2a4671909C20c6;
+    address public dataAddress = 0x668DE2b482Bfa7a8332FDD3BbA60B0d8070447EF;
     GetDataInterface data = GetDataInterface(dataAddress);
+    address public busdPriceAddress =
+        0x8Cdda3Ee614318b6363551F0bDE2Da9dE08e658B;
+    BusdPrice busdPrice = BusdPrice(busdPriceAddress);
     address public TreasuryAddress = 0xA4FE6E8150770132c32e4204C2C1Ff59783eDfA0;
     TreasuryInterface treasury = TreasuryInterface(TreasuryAddress);
 
@@ -62,10 +69,13 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
     IERC20 public vync = IERC20(0x71BE9BA58e0271b967a980eD8e59C07fF2108C85);
 
     uint256 decimal4 = 1e4;
+    uint256 decimal18 = 1e18;
     mapping(address => userInfoData) public userInfo;
     stakeInfoData public stakeInfo;
     uint256 s; // total staking amount
     uint256 u; //total unstaking amount
+    uint256 s_v; //total stake in vync
+    uint256 u_v; // total unstake in vync
 
     event rewardClaim(address indexed user, uint256 rewards);
     event Stake(address account, uint256 stakeAmount);
@@ -95,6 +105,15 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         emit DataAddressSet(_data);
     }
 
+    function set_busdPriceAddress(address _address) public onlyOwner {
+        require(
+            _address != address(0),
+            "can not set zero address for data address"
+        );
+        busdPriceAddress = _address;
+        busdPrice = BusdPrice(_address);
+    }
+
     function set_treasuryAddress(address _treasury) public onlyOwner {
         require(
             _treasury != address(0),
@@ -117,11 +136,15 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
     }
 
     function stake(uint256 amount) external nonReentrant {
-        (uint256 maxStakePerTx, , uint256 totalStakePerUser ) = data
+        uint256 _price = busdPrice.price();
+        uint256 usdAmount = amount * _price;
+        usdAmount = usdAmount / decimal4;
+        (uint256 maxStakePerTx, , uint256 totalStakePerUser) = data
             .returnMaxStakeUnstake();
-        require(amount <= maxStakePerTx, "exceed max stake limit for a tx");
+        require(usdAmount <= maxStakePerTx, "exceed max stake limit for a tx");
         require(
-            (userInfo[msg.sender].stakeBalance + amount) <= totalStakePerUser,
+            (userInfo[msg.sender].stakeBalance + usdAmount) <=
+                totalStakePerUser,
             "exceed total stake limit"
         );
         vync.transferFrom(msg.sender, address(this), amount);
@@ -155,15 +178,16 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
 
         userInfo[msg.sender].stakeBalanceWithReward =
             userInfo[msg.sender].stakeBalanceWithReward +
-            amount;
+            usdAmount;
         userInfo[msg.sender].stakeBalance =
             userInfo[msg.sender].stakeBalance +
-            amount;
+            usdAmount;
         userInfo[msg.sender].lastStakeUnstakeTimestamp = block.timestamp;
         userInfo[msg.sender].nextCompoundDuringStakeUnstake = nextCompound();
         userInfo[msg.sender].isStaker = true;
-        s = s + amount;
-        emit Stake(msg.sender, amount);
+        s = s + usdAmount;
+        s_v = s_v + amount;
+        emit Stake(msg.sender, usdAmount);
     }
 
     function unStake(uint256 amount) external nonReentrant {
@@ -172,13 +196,15 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
             "invalid staked amount"
         );
 
-         (, uint256 maxUnstakePerTx, ) = data.returnMaxStakeUnstake();
+        (, uint256 maxUnstakePerTx, ) = data.returnMaxStakeUnstake();
         require(amount <= maxUnstakePerTx, "exceed unstake limit per tx");
 
         uint256 pending = compoundedReward(msg.sender);
         uint256 stakeBalance = userInfo[msg.sender].stakeBalance;
-
-        vync.transfer(msg.sender, amount);
+        uint256 _price = busdPrice.price();
+        uint256 vyncAmount = amount / _price;
+        vyncAmount = vyncAmount * decimal4;
+        vync.transfer(msg.sender, vyncAmount);
         emit UnStake(msg.sender, amount);
 
         // reward update
@@ -206,10 +232,12 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
                 .stakeBalance
                 .sub(amount);
             u = u + amount;
+            u_v = u_v + vyncAmount;
         }
 
         if (amount >= stakeBalance) {
             u = u + stakeBalance;
+            u_v = u_v + vyncAmount;
             userInfo[msg.sender].pendingRewardAfterFullyUnstake = pending;
             userInfo[msg.sender].isClaimAferUnstake = true;
             userInfo[msg.sender].stakeBalanceWithReward = 0;
@@ -246,7 +274,7 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
             uint256 sec = tsec > stakeSec ? stakeSec : tsec;
             uint256 balance = userInfo[user].stakeBalanceWithReward;
             reward = (balance.mul(a)).div(100);
-            reward = reward / decimal4;
+            reward = reward / decimal18;
             _compoundedReward = reward * sec;
         }
     }
@@ -274,7 +302,7 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         for (uint256 i = 1; i <= loopRound; i++) {
             uint256 amount = balance.add(reward);
             reward = (amount.mul(a)).div(100);
-            reward = reward / decimal4;
+            reward = reward / decimal18;
             _compoundedReward = _compoundedReward.add(reward);
             balance = amount;
         }
@@ -305,6 +333,16 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         }
     }
 
+    function compoundedRewardInVync(address user)
+        public view
+        returns (uint256 _compoundedVyncReward)
+    {
+        uint256 reward;
+        reward = compoundedReward(user);
+        uint256 _price = busdPrice.price();
+        _compoundedVyncReward = (reward * decimal4) / _price;
+    }
+
     function pendingReward(address user)
         public
         view
@@ -328,7 +366,7 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         for (uint256 i = 1; i <= loopRound + 1; i++) {
             uint256 amount = balance.add(reward);
             reward = (amount.mul(a)).div(100);
-            reward = reward / decimal4;
+            reward = reward / decimal18;
             _pendingReward = _pendingReward.add(reward);
             balance = amount;
         }
@@ -358,6 +396,16 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         _pendingReward = _pendingReward - compoundedReward(user);
     }
 
+    function pendingRewardInVync(address user)
+        public view
+        returns (uint256 _pendingVyncReward)
+    {
+        uint256 reward;
+        reward = pendingReward(user);
+        uint256 _price = busdPrice.price();
+        _pendingVyncReward = (reward * decimal4) / _price;
+    }
+
     function lastCompoundedReward(address user)
         public
         view
@@ -384,7 +432,7 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         for (uint256 i = 1; i <= loopRound; i++) {
             uint256 amount = balance.add(reward);
             reward = (amount.mul(a)).div(100);
-            reward = reward / decimal4;
+            reward = reward / decimal18;
             _compoundedReward = _compoundedReward.add(reward);
             balance = amount;
         }
@@ -448,7 +496,7 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         for (uint256 i = 1; i <= loopRound; i++) {
             uint256 amount = balance.add(reward);
             reward = (amount.mul(a)).div(100);
-            reward = reward / decimal4;
+            reward = reward / decimal18;
             totalReward = totalReward.add(reward);
             balance = amount;
         }
@@ -483,9 +531,11 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         uint256 reward = userInfo[msg.sender].lastClaimedReward +
             userInfo[msg.sender].autoClaimWithStakeUnstake;
         require(reward > 0, "can't reap zero reward");
+        uint256 _price = busdPrice.price();
+        uint256 rewardAmount = (reward *decimal4) / _price;
 
-        treasury.send(msg.sender, reward);
-        emit rewardClaim(msg.sender, reward);
+        treasury.send(msg.sender, rewardAmount);
+        emit rewardClaim(msg.sender, rewardAmount);
         userInfo[msg.sender].autoClaimWithStakeUnstake = 0;
         userInfo[msg.sender].lastClaimTimestamp = block.timestamp;
         userInfo[msg.sender].nextCompoundDuringClaim = nextCompound();
@@ -522,12 +572,23 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         unstakingAmount = u;
     }
 
+    function totalStakeInVync() external view returns (uint256 stakingAmount) {
+        stakingAmount = s_v;
+    }
+
+    function totalUnstakeInVync()
+        external
+        view
+        returns (uint256 unstakingAmount)
+    {
+        unstakingAmount = u_v;
+    }
+
     function transferAnyERC20Token(
         address _tokenAddress,
         address _to,
         uint256 _amount
     ) public onlyOwner {
-        require(_tokenAddress != address(vync), "can not withdraw vync tokens");
         IERC20(_tokenAddress).transfer(_to, _amount);
     }
 }
