@@ -1,5 +1,4 @@
 //SPDX-License-Identifier: MIT
-// contract call swap function from pancakeswap, PanckeSwap takes fees from the users to swap assets
 
 pragma solidity ^0.8.13;
 
@@ -204,7 +203,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         uint256 fee = (amount * unstake_fee) / 100;
         amount = amount - fee;
         busd.transferFrom(msg.sender, address(this), amount);
-        busd.transferFrom(msg.sender,TreasuryAddress, fee);
+        busd.transferFrom(msg.sender, TreasuryAddress, fee);
 
         userInfo[msg.sender]
             .lastCompoundedRewardWithStakeUnstakeClaim = lastCompoundedReward(
@@ -218,6 +217,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
                 userInfo[msg.sender].stakeBalanceWithReward +
                 _pendingReward;
             userInfo[msg.sender].autoClaimWithStakeUnstake = _pendingReward;
+            userInfo[msg.sender].totalClaimedReward = 0;
 
             if (
                 block.timestamp <
@@ -232,7 +232,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             }
         }
 
-        (,uint256 res1 , ) = getSwappingPair().getReserves();
+        (, uint256 res1, ) = getSwappingPair().getReserves();
         uint256 amountToSwap = calculateSwapInAmount(res1, amount);
         uint256 minimumAmount = data.swapAmountCalculation(amountToSwap);
         uint256 vyncOut = swapBusdToVync(amountToSwap, minimumAmount);
@@ -322,10 +322,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         uint256 fee = (_amount * unstake_fee) / 100;
         _amount = _amount - fee;
 
-        require(
-            busd.transfer(TreasuryAddress, fee),
-            "unable to transfer fee"
-        );
+        require(busd.transfer(TreasuryAddress, fee), "unable to transfer fee");
 
         if (unstakeOption == 1) {
             require(
@@ -370,6 +367,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             userInfo[msg.sender].lastStakeUnstakeTimestamp = block.timestamp;
             userInfo[msg.sender]
                 .nextCompoundDuringStakeUnstake = nextCompound();
+            userInfo[msg.sender].totalClaimedReward = 0;
 
             userInfo[msg.sender].lpAmount =
                 userInfo[msg.sender].lpAmount -
@@ -491,15 +489,16 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         if (userInfo[_user].lastStakeUnstakeTimestamp < aprChangeTimestamp) {
             if (isAprIncrease == false) {
                 _compoundedReward =
-                    _compoundedReward - (userInfo[_user].autoClaimWithStakeUnstake * aprChangePercentage)/100;
+                    _compoundedReward -
+                    ((userInfo[_user].autoClaimWithStakeUnstake *
+                        aprChangePercentage) / 100);
             }
 
             if (isAprIncrease == true) {
                 _compoundedReward =
                     _compoundedReward +
-                    (userInfo[_user].autoClaimWithStakeUnstake *
-                        aprChangePercentage) /
-                    100;
+                    ((userInfo[_user].autoClaimWithStakeUnstake *
+                        aprChangePercentage) / 100);
             }
         }
 
@@ -701,17 +700,15 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             if (isAprIncrease == false) {
                 userInfo[_user].autoClaimWithStakeUnstake =
                     userInfo[_user].autoClaimWithStakeUnstake -
-                    (userInfo[_user].autoClaimWithStakeUnstake *
-                        aprChangePercentage) /
-                    100;
+                    ((userInfo[_user].autoClaimWithStakeUnstake *
+                        aprChangePercentage) / 100);
             }
 
             if (isAprIncrease == true) {
                 userInfo[_user].autoClaimWithStakeUnstake =
                     userInfo[_user].autoClaimWithStakeUnstake +
-                    ((userInfo[_user].autoClaimWithStakeUnstake) *
-                        aprChangePercentage) /
-                    100;
+                    (((userInfo[_user].autoClaimWithStakeUnstake) *
+                        aprChangePercentage) / 100);
             }
         }
     }
@@ -882,7 +879,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         view
         returns (uint256 lpNeeded)
     {
-        (,uint256 res1, ) = getSwappingPair().getReserves();
+        (, uint256 res1, ) = getSwappingPair().getReserves();
         lpNeeded = (amount * (getSwappingPair().totalSupply())) / (res1) / 2;
     }
 
