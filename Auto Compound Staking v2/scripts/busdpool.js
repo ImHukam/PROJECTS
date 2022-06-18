@@ -1,8 +1,9 @@
 const hre = require("hardhat");
 
 async function main() {
-  
-  const BUSDPixelSafePool = await hre.ethers.getContractFactory("BUSDVYNCSTAKE");
+  const BUSDPixelSafePool = await hre.ethers.getContractFactory(
+    "BUSDVYNCSTAKE"
+  );
   const bUSDPixelSafePool = await BUSDPixelSafePool.deploy();
 
   await bUSDPixelSafePool.deployed();
