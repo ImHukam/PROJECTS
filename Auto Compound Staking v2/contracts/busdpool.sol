@@ -192,6 +192,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     }
 
     function stake(uint256 amount) external nonReentrant {
+        require(isBlock[msg.sender] == false, "blocked");
         (uint256 maxStakePerTx, , uint256 totalStakePerUser, ) = data
             .returnMaxStakeUnstakePrice();
         require(amount <= maxStakePerTx, "exceed max stake limit for a tx");
