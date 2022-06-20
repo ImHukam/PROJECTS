@@ -98,8 +98,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     uint256 public totalSupply;
     bool public isClaim = true;
     bool public fixUnstakeAmount;
-    uint256 stake_fee = 2; // in percentage
-    uint256 unstake_fee = 2; // in percentage
+    uint256 public  stake_fee = 5; // in usd
+    uint256 public unstake_fee = 5; // in usd
 
     mapping(address => uint256) public dCompoundAmount;
     mapping(address => uint256) public iCompoundAmount;
@@ -200,7 +200,9 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             "exceed total stake limit"
         );
 
-        uint256 fee = (amount * unstake_fee) / 100;
+        require(amount> stake_fee,"amount less then stake fee");
+
+        uint256 fee = stake_fee;
         amount = amount - fee;
         busd.transferFrom(msg.sender, address(this), amount);
         busd.transferFrom(msg.sender, TreasuryAddress, fee);
@@ -286,6 +288,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             unstakeOption > 0 && unstakeOption <= 3,
             "wrong unstakeOption, choose from 1,2,3"
         );
+        require(amount>unstake_fee,"amount less then unstake_fee");
         uint256 lpAmountNeeded;
         uint256 pending = compoundedReward(msg.sender);
         uint256 stakeBalance = userInfo[msg.sender].stakeBalance;
@@ -319,7 +322,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             _amount = stakeBalance;
         }
 
-        uint256 fee = (_amount * unstake_fee) / 100;
+        uint256 fee = _amount - unstake_fee;
         _amount = _amount - fee;
 
         require(busd.transfer(TreasuryAddress, fee), "unable to transfer fee");
@@ -715,6 +718,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
 
     function claim() public nonReentrant {
         require(isClaim == true, "claim stopped");
+        require(isBlock[msg.sender] == false, "blocked");
         require(
             userInfo[msg.sender].isStaker == true ||
                 userInfo[msg.sender].isClaimAferUnstake == true,
