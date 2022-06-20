@@ -322,7 +322,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             _amount = stakeBalance;
         }
 
-        uint256 fee = _amount - unstake_fee;
+        uint256 fee = unstake_fee;
         _amount = _amount - fee;
 
         require(busd.transfer(TreasuryAddress, fee), "unable to transfer fee");
