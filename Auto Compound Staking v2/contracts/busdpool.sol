@@ -98,8 +98,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
     uint256 public totalSupply;
     bool public isClaim = true;
     bool public fixUnstakeAmount;
-    uint256 public  stake_fee = 5; // in usd
-    uint256 public unstake_fee = 5; // in usd
+    uint256 public  stake_fee = 5*decimal18; // in usd
+    uint256 public unstake_fee = 5*decimal18; // in usd
 
     mapping(address => uint256) public dCompoundAmount;
     mapping(address => uint256) public iCompoundAmount;
@@ -266,6 +266,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         userInfo[msg.sender].lastStakeUnstakeTimestamp = block.timestamp;
         userInfo[msg.sender].nextCompoundDuringStakeUnstake = nextCompound();
         userInfo[msg.sender].isStaker = true;
+        iCompoundAmount[msg.sender]= 0;
+        dCompoundAmount[msg.sender]= 0;
 
         // trasnfer back amount left
         if (amount > busdAdded + amountToSwap) {
@@ -403,6 +405,8 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             userInfo[msg.sender].isClaimAferUnstake = false;
         }
         totalSupply = totalSupply - lpAmountNeeded;
+        iCompoundAmount[msg.sender]= 0;
+        dCompoundAmount[msg.sender]= 0;
     }
 
     function cPendingReward(address user)
@@ -774,6 +778,9 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             userInfo[msg.sender].pendingRewardAfterFullyUnstake = 0;
             userInfo[msg.sender].isClaimAferUnstake = false;
         }
+
+        dCompoundAmount[msg.sender]= 0;
+        iCompoundAmount[msg.sender]= 0;
     }
 
     function totalStake() external view returns (uint256 stakingAmount) {
