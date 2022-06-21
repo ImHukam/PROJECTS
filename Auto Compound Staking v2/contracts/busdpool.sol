@@ -145,7 +145,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
 
     function set_fee(uint256 _stakeFee, uint256 _unstakeFee) public onlyOwner {
         stake_fee = _stakeFee;
-        _unstakeFee = _unstakeFee;
+        unstake_fee = _unstakeFee;
     }
 
     function set_isClaim(bool _isClaim) public onlyOwner {
@@ -698,6 +698,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             userInfo[user].lastClaimedReward -
             cPendingReward(user);
 
+        
         (
             uint256 aprChangeTimestamp,
             uint256 aprChangePercentage,
