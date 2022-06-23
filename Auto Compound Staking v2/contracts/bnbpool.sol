@@ -110,9 +110,7 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
     uint256 public unstake_fee = 5 * decimal18; // in usd 18 decimal
     address public feeReceiver;
 
-    mapping(address => uint256) public dCompoundAmount;
-    mapping(address => uint256) public iCompoundAmount;
-    mapping(address => bool) isBlock;
+    mapping(address => bool) public isBlock;
 
     event rewardClaim(address indexed user, uint256 rewards);
     event Stake(address account, uint256 stakeAmount);
@@ -165,20 +163,6 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
 
     function set_fixUnstakeAmount(bool _fix) public onlyOwner {
         fixUnstakeAmount = _fix;
-    }
-
-    function d_compoundAmount(address _address, uint256 _amount)
-        public
-        onlyOwner
-    {
-        dCompoundAmount[_address] = _amount;
-    }
-
-    function i_compoundAmount(address _address, uint256 _amount)
-        public
-        onlyOwner
-    {
-        iCompoundAmount[_address] = _amount;
     }
 
     function _block(address _address, bool is_Block) public onlyOwner {
@@ -280,9 +264,6 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
         userInfo[msg.sender].lastStakeUnstakeTimestamp = block.timestamp;
         userInfo[msg.sender].nextCompoundDuringStakeUnstake = nextCompound();
         userInfo[msg.sender].isStaker = true;
-
-        iCompoundAmount[msg.sender] = 0;
-        dCompoundAmount[msg.sender] = 0;
 
         // trasnfer back amount left
         if (amount1 > bnbAdded + amountToSwap) {
@@ -414,8 +395,6 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
         }
 
         totalSupply = totalSupply - lpAmountNeeded;
-        iCompoundAmount[msg.sender] = 0;
-        dCompoundAmount[msg.sender] = 0;
     }
 
     function cPendingReward(address user)
@@ -519,10 +498,6 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
             }
         }
 
-        if (iCompoundAmount[_user] > 0 || dCompoundAmount[_user] > 0) {
-            _compoundedReward = _compoundedReward + iCompoundAmount[_user];
-            _compoundedReward = _compoundedReward - dCompoundAmount[_user];
-        }
     }
 
     function compoundedRewardInVync(address user)
@@ -541,6 +516,7 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
         view
         returns (uint256 _pendingReward)
     {
+        address _user = user;
         uint256 nextcompound = userInfo[user].nextCompoundDuringStakeUnstake;
         (uint256 a, uint256 compoundRate, ) = data.returnData();
         uint256 compoundTime = block.timestamp > nextcompound
@@ -583,6 +559,28 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
             _pendingReward =
                 _pendingReward +
                 userInfo[user].pendingRewardAfterFullyUnstake;
+        }
+
+        (
+            uint256 aprChangeTimestamp,
+            uint256 aprChangePercentage,
+            bool isAprIncrease
+        ) = data.returnAprData();
+
+        if (userInfo[_user].lastStakeUnstakeTimestamp < aprChangeTimestamp) {
+            if (isAprIncrease == false) {
+                _pendingReward =
+                    _pendingReward -
+                    ((userInfo[_user].autoClaimWithStakeUnstake *
+                        aprChangePercentage) / 100);
+            }
+
+            if (isAprIncrease == true) {
+                _pendingReward =
+                    _pendingReward +
+                    ((userInfo[_user].autoClaimWithStakeUnstake *
+                        aprChangePercentage) / 100);
+            }
         }
 
         _pendingReward = _pendingReward - compoundedReward(user);
@@ -749,12 +747,6 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
             userInfo[msg.sender].autoClaimWithStakeUnstake;
         require(reward > 0, "can't reap zero reward");
 
-        if (
-            iCompoundAmount[msg.sender] > 0 || dCompoundAmount[msg.sender] > 0
-        ) {
-            reward = reward + iCompoundAmount[msg.sender];
-            reward = reward - dCompoundAmount[msg.sender];
-        }
 
         (, , , uint256 price) = data.returnMaxStakeUnstakePrice();
         reward = (reward * decimal4) / price;
@@ -787,9 +779,6 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
             userInfo[msg.sender].pendingRewardAfterFullyUnstake = 0;
             userInfo[msg.sender].isClaimAferUnstake = false;
         }
-
-        dCompoundAmount[msg.sender]= 0;
-        iCompoundAmount[msg.sender]= 0;
     }
 
     function totalStake() external view returns (uint256 stakingAmount) {
