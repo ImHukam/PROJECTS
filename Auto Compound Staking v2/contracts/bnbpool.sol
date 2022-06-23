@@ -240,7 +240,7 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
             }
         }
 
-        (, uint256 res1, ) = getSwappingPair().getReserves();
+        (,uint256 res1,) = getSwappingPair().getReserves();
         uint256 amountToSwap = calculateSwapInAmount(res1, amount);
         uint256 minimumAmount = data.swapAmountCalculation(amountToSwap);
         uint256 vyncOut = swapbnbToVync(amountToSwap, minimumAmount);
@@ -348,7 +348,7 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
         emit UnStake(msg.sender, amount1);
 
         // reward update
-        if (amount1 < stakeBalance) {
+        if ((amount1+fee) < stakeBalance) {
             uint256 _pendingReward = compoundedReward(msg.sender);
 
             userInfo[msg.sender]
@@ -377,7 +377,7 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
             u = u + amount1;
         }
 
-        if (amount1 >= stakeBalance) {
+        if ((amount1+fee) >= stakeBalance) {
             u = u + stakeBalance;
             userInfo[msg.sender].pendingRewardAfterFullyUnstake = pending;
             userInfo[msg.sender].isClaimAferUnstake = true;
@@ -881,7 +881,7 @@ contract BNBVYNCSTAKE is ReentrancyGuard, Ownable {
         view
         returns (uint256 lpNeeded)
     {
-        (, uint256 res1, ) = getSwappingPair().getReserves();
+        (,uint256 res1, ) = getSwappingPair().getReserves();
         lpNeeded = (amount * (getSwappingPair().totalSupply())) / (res1) / 2;
     }
 
