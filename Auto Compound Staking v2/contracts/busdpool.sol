@@ -220,7 +220,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
             }
         }
 
-        (, uint256 res1, ) = getSwappingPair().getReserves();
+        (,uint256 res1 ,) = getSwappingPair().getReserves();
         uint256 amountToSwap = calculateSwapInAmount(res1, amount);
         uint256 minimumAmount = data.swapAmountCalculation(amountToSwap);
         uint256 vyncOut = swapBusdToVync(amountToSwap, minimumAmount);
@@ -363,12 +363,11 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
                 lpAmountNeeded;
             userInfo[msg.sender].stakeBalanceWithReward =
                 userInfo[msg.sender].stakeBalanceWithReward -
-                _amount +
-                fee;
+                _amount - fee;
             userInfo[msg.sender].stakeBalance =
                 userInfo[msg.sender].stakeBalance -
                 amount;
-            u = u + amount;
+            u = u + _amount + fee;
         }
 
         if (amount >= stakeBalance) {
@@ -881,7 +880,7 @@ contract BUSDVYNCSTAKE is ReentrancyGuard, Ownable {
         view
         returns (uint256 lpNeeded)
     {
-        (, uint256 res1, ) = getSwappingPair().getReserves();
+        (,uint256 res1, ) = getSwappingPair().getReserves();
         lpNeeded = (amount * (getSwappingPair().totalSupply())) / (res1) / 2;
     }
 
