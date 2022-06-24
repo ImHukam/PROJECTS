@@ -763,6 +763,7 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         address staker = msg.sender;
         require(isMigrate == true, "migration off");
         require(stopMigrate[staker] == false, "can not migrate");
+        uint256 _compoundReward = compoundedReward(staker);
 
         VyncMigrate.userInfoData memory user= migrate.userInfo(staker);
         userInfo[staker].stakeBalanceWithReward= userInfo[staker].stakeBalanceWithReward + user.stakeBalanceWithReward;
@@ -772,7 +773,7 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         userInfo[staker].lastClaimTimestamp = block.timestamp;
         userInfo[staker].isStaker = true;
         userInfo[staker].totalClaimedReward = 0;
-        userInfo[staker].autoClaimWithStakeUnstake= compoundedReward(staker)+ migrate.compoundedReward(staker);
+        userInfo[staker].autoClaimWithStakeUnstake= _compoundReward + migrate.compoundedReward(staker);
         userInfo[staker].pendingRewardAfterFullyUnstake = userInfo[staker].pendingRewardAfterFullyUnstake + user.pendingRewardAfterFullyUnstake;
         userInfo[staker].isClaimAferUnstake;
         userInfo[staker].nextCompoundDuringStakeUnstake = nextCompound();
@@ -786,6 +787,7 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
     function migrateStakingByOwner(address _staker) public onlyOwner {
         address staker = _staker;
         require(stopMigrate[staker] == false, "can not migrate");
+        uint256 _compoundReward = compoundedReward(staker);
 
         VyncMigrate.userInfoData memory user= migrate.userInfo(staker);
         userInfo[staker].stakeBalanceWithReward= userInfo[staker].stakeBalanceWithReward + user.stakeBalanceWithReward;
@@ -795,7 +797,7 @@ contract VYNCSTAKEPOOL is ReentrancyGuard, Ownable {
         userInfo[staker].lastClaimTimestamp = block.timestamp;
         userInfo[staker].isStaker = true;
         userInfo[staker].totalClaimedReward = 0;
-        userInfo[staker].autoClaimWithStakeUnstake= compoundedReward(staker) + migrate.compoundedReward(staker);
+        userInfo[staker].autoClaimWithStakeUnstake= _compoundReward + migrate.compoundedReward(staker);
         userInfo[staker].pendingRewardAfterFullyUnstake = userInfo[staker].pendingRewardAfterFullyUnstake + user.pendingRewardAfterFullyUnstake;
         userInfo[staker].isClaimAferUnstake;
         userInfo[staker].nextCompoundDuringStakeUnstake = nextCompound();
